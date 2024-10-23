@@ -214,35 +214,33 @@ class NoteListFragment(
         val userName = userViewModel.userState.value?.name ?: ""
 
         lifecycleScope.launch {
-            // 删除账户和笔记信息
-            // 从 SharedPreferences 中移除该用户
+            // 在后台执行删除操作
+            withContext(Dispatchers.IO) {
+                try {
+                    // 从数据库中获取用户信息
+                    val user = noteDB.userDao().getByName(userName)
 
-            val user = withContext(Dispatchers.IO) {
-                noteDB.userDao().getByName(userName)
+                    // 删除数据库中的用户及其相关数据
+                    noteDB.deleteDao().delete(user.userId)
+
+                    // 从 SharedPreferences 中移除该用户的信息
+                    userPasswdKV.edit().remove(userName).apply()
+
+                    // 清空 ViewModel 中的用户状态
+                    userViewModel.setUser(UserState())
+
+                    // 跳转回登录界面
+                    withContext(Dispatchers.Main) {
+                        findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
+                    }
+
+                    Log.d("NoteListFragment", "User $userName successfully removed")
+                } catch (e: Exception) {
+                    Log.e("NoteListFragment", "Error deleting user: ${e.message}")
+                }
             }
-            Log.d("LoginFragment", "Loaded user: ${user.userName}, ID: ${user.userId}")
 
-            // 确保 user 不为空，防止空指针错误
-            if (user == null) {
-                Log.e("NoteListFragment", "User not found in database: $userName")
-                return@launch
-            }else{
-                noteDB.deleteDao().delete(user.userId)
-            }
 
-            // 清空 ViewModel 中的用户状态
-            userPasswdKV.edit().remove(userName).apply()
-
-//            val exists = userPasswdKV.contains(userName)
-//            if (!exists) {
-//                Log.d("NoteListFragment", "User $userName successfully removed from SharedPreferences")
-//            }
-//            Log.d("NoteListFragment", "success")
-
-            userViewModel.setUser(UserState())
-
-            // 跳转回登录界面
-            findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
         }
         // TODO: Launch a coroutine to perform account deletion in the background
 
