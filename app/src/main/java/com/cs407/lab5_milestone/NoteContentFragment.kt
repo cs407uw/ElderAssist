@@ -150,9 +150,16 @@ class NoteContentFragment(
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, callback)
     }
 
+//    override fun onDestroyView() {
+//        super.onDestroyView()
+//        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+//    }
     override fun onDestroyView() {
         super.onDestroyView()
-        (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+    // 安全检查 activity 是否是 AppCompatActivity 的实例
+        if (activity is AppCompatActivity) {
+            (activity as AppCompatActivity).supportActionBar?.setDisplayHomeAsUpEnabled(false)
+        }
     }
 
     private fun saveContent() {
