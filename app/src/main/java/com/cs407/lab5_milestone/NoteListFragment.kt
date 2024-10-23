@@ -29,6 +29,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.util.Calendar
+import androidx.paging.PagingSource
+import android.util.Log
 
 class NoteListFragment(
     private val injectedUserViewModel: UserViewModel? = null
@@ -57,26 +59,21 @@ class NoteListFragment(
             injectedUserViewModel
         } else {
             // TODO - Use ViewModelProvider to init UserViewModel
-            UserViewModel()
+            //UserViewModel()
+            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
 
         // Manually create 1000 notes for "large" user
         val userState = userViewModel.userState.value
+
+        //log
+        Log.d("NoteListFragment", "UserState in NoteListFragment: ${userState?.name}")
+
         lifecycleScope.launch {
             val countNote = noteDB.noteDao().userNoteCount(userState.id)
-            if (countNote == 0 && userState.name == "large") {
-                for (i in 1..1000) {
-                    noteDB.noteDao().upsertNote(
-                        Note(
-                            noteTitle = "Note $i",
-                            noteAbstract = "This is Note $i",
-                            noteDetail = "Welcome to Note $i",
-                            notePath = null,
-                            lastEdited = Calendar.getInstance().time
-                        ), userState.id
-                    )
-                }
-            }
+            Log.d("NoteListFragment", "Number of notes for user: $countNote")
+            Log.d("NoteListFragment", "Inserting notes for user ID: ${userState.name}")
+
         }
     }
 
@@ -117,6 +114,7 @@ class NoteListFragment(
         }, viewLifecycleOwner)
 
         val userState = userViewModel.userState.value
+
         greetingTextView.text = getString(R.string.greeting_text, userState.name)
 
         adapter = NoteAdapter(
@@ -147,7 +145,18 @@ class NoteListFragment(
         val userState = userViewModel.userState.value
 
         // TODO: Set up paging configuration with a specified page size and prefetch distance
+        val pager = Pager(
+            PagingConfig(pageSize = 20, prefetchDistance = 5)
+        ) {
+            noteDB.userDao().getUsersWithNoteListsByIdPaged(userState.id) // 这里应该使用 userDao
+        }
 
+
+        lifecycleScope.launch {
+            pager.flow.cachedIn(lifecycleScope).collect { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
         // TODO: Implement a query to retrieve the paged list of notes associated with the user
 
         // TODO: Launch a coroutine to collect the paginated flow and submit it to the RecyclerView adapter
@@ -172,17 +181,23 @@ class NoteListFragment(
 
             deleteButton.setOnClickListener {
                 // TODO: Launch a coroutine to perform the note deletion in the background
-
+                lifecycleScope.launch {
+                    // 使用 deleteNotes 方法来删除单个笔记
+                    noteDB.deleteDao().deleteNotes(listOf(noteToDelete.noteId))
+                    deleteIt = false
+                    bottomSheetDialog.dismiss()
+                    loadNotes() // 重新加载笔记列表
+                }
                 // TODO: Implement the logic to delete the note from the Room database using the DAO
 
                 // TODO: Reset any flags or variables that control the delete state
-                deleteIt = false // Example of resetting a flag after deletion
+                //deleteIt = false // Example of resetting a flag after deletion
 
                 // TODO: Dismiss the bottom sheet dialog after the deletion is completed
-                bottomSheetDialog.dismiss()
+                //bottomSheetDialog.dismiss()
 
                 // TODO: Reload the list of notes to reflect the deleted note (e.g., refresh UI)
-                loadNotes() // Implement the function to refresh or reload the notes
+                //loadNotes() // Implement the function to refresh or reload the notes
             }
 
             cancelButton.setOnClickListener {
@@ -200,7 +215,27 @@ class NoteListFragment(
 
     private fun deleteAccountAndLogout() {
         // TODO: Retrieve the current user state from the ViewModel (contains user details)
+        val userState = userViewModel.userState.value
 
+        lifecycleScope.launch {
+            // 删除账户和笔记信息
+            noteDB.deleteDao().delete(userState.id)
+            // 从 SharedPreferences 中移除该用户
+            userPasswdKV.edit().remove(userState.name).apply()
+
+//            val isDeleted = !userPasswdKV.contains(userState.name)
+//            if (isDeleted) {
+//                Log.d("DeleteAccount", "User account successfully deleted from SharedPreferences")
+//            } else {
+//                Log.d("DeleteAccount", "Failed to delete user account from SharedPreferences")
+//            }
+
+            // 清空 ViewModel 中的用户状态
+            userViewModel.setUser(UserState())
+
+            // 跳转回登录界面
+            findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
+        }
         // TODO: Launch a coroutine to perform account deletion in the background
 
         // TODO: Implement the logic to delete the user's data from the Room database

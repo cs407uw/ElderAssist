@@ -1,5 +1,4 @@
 package com.cs407.lab5_milestone
-
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -18,6 +17,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.security.MessageDigest
+import android.util.Log
 
 class LoginFragment(
     private val injectedUserViewModel: UserViewModel? = null // For testing only
@@ -48,10 +48,15 @@ class LoginFragment(
             injectedUserViewModel
         } else {
             // TODO - Use ViewModelProvider to init UserViewModel
-            UserViewModel()
+            //UserViewModel()
+            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
+        //log
+        Log.d("LoginFragment", "Login screen loaded")
 
         // TODO - Get shared preferences from using R.string.userPasswdKV as the name
+        userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
+        noteDB = NoteDatabase.getDatabase(requireContext())
 
         return view
     }
@@ -69,16 +74,49 @@ class LoginFragment(
         // Set the login button click action
         loginButton.setOnClickListener {
             // TODO: Get the entered username and password from EditText fields
+            val username = usernameEditText.text.toString()
+            val password = passwordEditText.text.toString()
+
+            //log
+            Log.d("LoginFragment", "Attempting login with username: $username and password: $password")
 
             // TODO: Set the logged-in user in the ViewModel (store user info) (placeholder)
-            userViewModel.setUser(UserState(0, "name", "passwd")) // You will implement this in UserViewModel
+            //userViewModel.setUser(UserState(0, "name", "passwd")) // You will implement this in UserViewModel
+            if (username.isEmpty() || password.isEmpty()) {
+                errorTextView.text = "Username or Password cannot be empty."
+                errorTextView.visibility = View.VISIBLE
+            }else{
 
             // TODO: Navigate to another fragment after successful login
-            findNavController().navigate(R.id.action_loginFragment_to_noteListFragment) // Example navigation action
-
+            //findNavController().navigate(R.id.action_loginFragment_to_noteListFragment) // Example navigation action
             // TODO: Show an error message if either username or password is empty
-            errorTextView.visibility = View.VISIBLE
+            //errorTextView.visibility = View.VISIBLE
+                lifecycleScope.launch {
+                    val success = withContext(Dispatchers.IO) {
+                        getUserPasswd(username, password)
+                    }
 
+                    if (success) {
+                        //log
+                        Log.d("LoginFragment", "Login successful for user: $username")
+
+                        // Set user in ViewModel and navigate to note list
+                        userViewModel.setUser(UserState(username.hashCode(), username, password))
+
+                        //log
+                        //val currentUser = userViewModel.userState.value
+                        //Log.d("LoginFragment", "Current UserState after setUser: ${currentUser?.name}")
+
+                        findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
+                    } else {
+                        //log
+                        Log.d("LoginFragment", "Login failed: incorrect username or password")
+
+                        errorTextView.text = "Login failed. Incorrect username or password."
+                        errorTextView.visibility = View.VISIBLE
+                    }
+                }
+            }
         }
     }
 
@@ -87,9 +125,32 @@ class LoginFragment(
         passwdPlain: String
     ): Boolean {
         // TODO: Hash the plain password using a secure hashing function
-
+        val hashedPassword = hash(passwdPlain)
         // TODO: Check if the user exists in SharedPreferences (using the username as the key)
+        // Check if the user exists in SharedPreferences
+        return if (userPasswdKV.contains(name)) {
+            // Retrieve the stored password and compare it
+            val storedPassword = userPasswdKV.getString(name, null)
+            if (storedPassword == hashedPassword) {
+                val user = noteDB.userDao().getByName(name)
+                user?.let {
+                    userViewModel.setUser(UserState(it.userId, it.userName, storedPassword))
+                }
+                true
+            } else {
+                false
+            }
+        } else {
+            // If the user doesn't exist, create a new user and store the hashed password
+            val newUser = User(userName = name)
+            val userId = noteDB.userDao().insert(newUser).toInt()
+            userViewModel.setUser(UserState(userId, name, hashedPassword))
 
+            // Store hashed password in SharedPreferences
+            userPasswdKV.edit().putString(name, hashedPassword).apply()
+
+            true
+        }
 
         // TODO: Retrieve the stored password from SharedPreferences
 
@@ -103,7 +164,7 @@ class LoginFragment(
 
         // TODO: Return true if the user login is successful or the user was newly created
 
-        return true
+        //return true
     }
 
     private fun hash(input: String): String {

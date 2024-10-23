@@ -55,7 +55,8 @@ android {
 }
 
 dependencies {
-
+    implementation ("androidx.paging:paging-runtime:3.1.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.4.0")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
