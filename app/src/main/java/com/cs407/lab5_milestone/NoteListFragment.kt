@@ -216,7 +216,7 @@ class NoteListFragment(
         lifecycleScope.launch {
             // 删除账户和笔记信息
             // 从 SharedPreferences 中移除该用户
-            //noteDB.deleteDao().delete(userId.toInt())
+
             val user = withContext(Dispatchers.IO) {
                 noteDB.userDao().getByName(userName)
             }
@@ -226,6 +226,8 @@ class NoteListFragment(
             if (user == null) {
                 Log.e("NoteListFragment", "User not found in database: $userName")
                 return@launch
+            }else{
+                noteDB.deleteDao().delete(user.userId)
             }
 
             // 清空 ViewModel 中的用户状态

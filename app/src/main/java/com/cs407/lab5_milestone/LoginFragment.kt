@@ -103,7 +103,8 @@ class LoginFragment(
 
                         // Set user in ViewModel and navigate to note list
                         //Log.d("LoginFragment", "Current UserState after setUser: ${currentUser?.name}")
-                        userViewModel.setUser(UserState(0, username, password))
+                        //userViewModel.setUser(UserState(0, username, password))
+                        userViewModel.setUser(UserState(noteDB.userDao().getByName(username).userId, username, password))
                         findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
                     } else {
                         //log
