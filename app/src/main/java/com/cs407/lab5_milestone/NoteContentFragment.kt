@@ -80,20 +80,21 @@ class NoteContentFragment(
                         // 笔记内容存储在数据库中
                         contentEditText.setText(note.noteDetail)
                     } else {
-                        // 检查文件并读取内容
-                        try {
-                            val notePath = note.notePath
-                            if (notePath != null) {
+                        // 检查文件路径是否存在，并读取内容
+                        val notePath = note.notePath
+                        if (notePath != null && File(notePath).exists()) {
+                            // 文件存在，读取内容
+                            try {
                                 val file = File(notePath)
-                                if (file.exists()) {
-                                    val fileContent = file.readText()
-                                    contentEditText.setText(fileContent)
-                                } else {
-                                    contentEditText.setText("file not eexist")
-                                }
+                                val fileContent = file.readText()
+                                contentEditText.setText(fileContent)
+                            } catch (e: Exception) {
+                                // 读取文件失败时的处理
+                                contentEditText.setText("error reading file: ${e.message}")
                             }
-                        } catch (e: Exception) {
-                            contentEditText.setText("error of reading file: ${e.message}")
+                        } else {
+                            // 文件路径为空或文件不存在
+                            contentEditText.setText("No file exists for this note.")
                         }
                     }
                 }
@@ -169,25 +170,38 @@ class NoteContentFragment(
 
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
-                // 假设内容不会太大，可以直接存储到数据库中
-                Log.d("NoteContentFragment", "UserId: $userId")
+                val noteDetail: String?
+                var notePath: String? = null
 
-                val noteDetail = content
+                // If content length exceeds the threshold, store in file
+                if (content.length > 1024) {
+                    // Generate the file name based on userId, noteId, and current timestamp
+                    val lastEdited = Calendar.getInstance().time
+                    val fileName = "note-${userId}-${noteId}-${lastEdited.time}"
+                    val file = File(requireContext().filesDir, fileName)
 
-                // 创建 Note 对象
+                    // Write the content to the file
+                    file.writeText(content)
+                    noteDetail = null
+                    notePath = file.absolutePath // Store the file path
+                } else {
+                    noteDetail = content // If content is small, store in the database
+                }
+
+                // Create the note object
                 val note = Note(
                     noteId = noteId,
                     noteTitle = title,
                     noteAbstract = splitAbstractDetail(content),
                     noteDetail = noteDetail,
-                    notePath = null, // 暂时忽略文件路径
+                    notePath = notePath,
                     lastEdited = Calendar.getInstance().time
                 )
 
-                // 插入或更新笔记
+                // Insert or update the note in the database
                 noteDB.noteDao().upsertNote(note, userId)
 
-                // 切换回主线程以导航回上一个界面
+                // Switch back to the main thread to navigate back to the previous screen
                 withContext(Dispatchers.Main) {
                     findNavController().popBackStack()
                 }
