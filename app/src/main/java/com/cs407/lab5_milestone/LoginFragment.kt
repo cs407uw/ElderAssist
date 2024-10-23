@@ -109,7 +109,7 @@ class LoginFragment(
                         //log
                         Log.d("LoginFragment", getString(R.string.fail_login))
 
-                        errorTextView.text = "Login failed. Incorrect username or password."
+                        errorTextView.text = getString(R.string.fail_login)
                         errorTextView.visibility = View.VISIBLE
                     }
                 }
