@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
+import android.util.Log
 
 class NoteContentFragment(
     private val injectedUserViewModel: UserViewModel? = null
@@ -41,7 +42,7 @@ class NoteContentFragment(
             injectedUserViewModel
         } else {
             // TODO - Use ViewModelProvider to init UserViewModel
-            UserViewModel()
+            ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
         userId = userViewModel.userState.value.id
     }
@@ -65,7 +66,38 @@ class NoteContentFragment(
 
         if (noteId != 0) {
             // TODO: Launch a coroutine to fetch the note from the database in the background
+            lifecycleScope.launch {
+                // 在后台线程中从 Room 数据库中检索笔记
+                val note = withContext(Dispatchers.IO) {
+                    noteDB.noteDao().getById(noteId)
+                }
 
+                // 检查笔记内容是否存储在数据库或文件中
+                withContext(Dispatchers.Main) {
+                    titleEditText.setText(note.noteTitle)
+
+                    if (note.noteDetail != null) {
+                        // 笔记内容存储在数据库中
+                        contentEditText.setText(note.noteDetail)
+                    } else {
+                        // 检查文件并读取内容
+                        try {
+                            val notePath = note.notePath
+                            if (notePath != null) {
+                                val file = File(notePath)
+                                if (file.exists()) {
+                                    val fileContent = file.readText()
+                                    contentEditText.setText(fileContent)
+                                } else {
+                                    contentEditText.setText("file not eexist")
+                                }
+                            }
+                        } catch (e: Exception) {
+                            contentEditText.setText("error of reading file: ${e.message}")
+                        }
+                    }
+                }
+            }
             // TODO: Retrieve the note from the Room database using the noteId
 
             // TODO: Check if the note content is stored in the database or in a file
@@ -84,6 +116,7 @@ class NoteContentFragment(
         saveButton.setOnClickListener {
             saveContent()
         }
+
     }
 
     private fun setupMenu() {
@@ -124,7 +157,35 @@ class NoteContentFragment(
 
     private fun saveContent() {
         // TODO: Retrieve the title and content from EditText fields
+        val title = titleEditText.text.toString()
+        val content = contentEditText.text.toString()
 
+        lifecycleScope.launch {
+            withContext(Dispatchers.IO) {
+                // 假设内容不会太大，可以直接存储到数据库中
+                Log.d("NoteContentFragment", "UserId: $userId")
+
+                val noteDetail = content
+
+                // 创建 Note 对象
+                val note = Note(
+                    noteId = noteId,
+                    noteTitle = title,
+                    noteAbstract = splitAbstractDetail(content),
+                    noteDetail = noteDetail,
+                    notePath = null, // 暂时忽略文件路径
+                    lastEdited = Calendar.getInstance().time
+                )
+
+                // 插入或更新笔记
+                noteDB.noteDao().upsertNote(note, userId)
+
+                // 切换回主线程以导航回上一个界面
+                withContext(Dispatchers.Main) {
+                    findNavController().popBackStack()
+                }
+            }
+        }
         // TODO: Launch a coroutine to save the note in the background (non-UI thread)
 
         // TODO: Check if the note content is too large for direct storage in the database
@@ -144,7 +205,7 @@ class NoteContentFragment(
         // TODO: Switch back to the main thread to navigate the UI after saving
 
         // TODO: Navigate back to the previous screen (e.g., after saving the note)
-        findNavController().popBackStack()
+        //findNavController().popBackStack()
     }
 
     private fun splitAbstractDetail(content: String?): String {
