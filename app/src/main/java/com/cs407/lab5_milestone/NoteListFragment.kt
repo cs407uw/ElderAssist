@@ -178,11 +178,20 @@ class NoteListFragment(
             deleteButton.setOnClickListener {
                 // TODO: Launch a coroutine to perform the note deletion in the background
                 lifecycleScope.launch {
-                    // 使用 deleteNotes 方法来删除单个笔记
-                    noteDB.deleteDao().deleteNotes(listOf(noteToDelete.noteId))
-                    deleteIt = false
-                    bottomSheetDialog.dismiss()
-                    loadNotes() // 重新加载笔记列表
+                    try {
+                        withContext(Dispatchers.IO) {
+                            noteDB.deleteDao().deleteNotes(listOf(noteToDelete.noteId))
+                        }
+                        deleteIt = false
+                        // 在删除笔记后，确保在主线程上更新视图和关闭对话框
+                        withContext(Dispatchers.Main) {
+                            bottomSheetDialog.dismiss()
+                            loadNotes() // 重新加载笔记列表，刷新UI
+                        }
+                    } catch (e: Exception) {
+                        // 捕获任何异常并处理错误，例如弹出提示或记录日志
+                        Log.e("NoteListFragment", "Error deleting note: ${e.message}")
+                    }
                 }
                 // TODO: Implement the logic to delete the note from the Room database using the DAO
 
