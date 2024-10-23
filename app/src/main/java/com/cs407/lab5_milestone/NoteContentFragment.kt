@@ -82,19 +82,14 @@ class NoteContentFragment(
                     } else {
                         // 检查文件路径是否存在，并读取内容
                         val notePath = note.notePath
-                        if (notePath != null && File(notePath).exists()) {
-                            // 文件存在，读取内容
-                            try {
-                                val file = File(notePath)
+                        if (note.noteDetail == null && note.notePath != null) {
+                            val file = File(requireContext().filesDir, note.notePath)
+                            if (file.exists()) {
                                 val fileContent = file.readText()
                                 contentEditText.setText(fileContent)
-                            } catch (e: Exception) {
-                                // 读取文件失败时的处理
-                                contentEditText.setText("error reading file: ${e.message}")
+                            } else {
+                                contentEditText.setText("File not found.")
                             }
-                        } else {
-                            // 文件路径为空或文件不存在
-                            contentEditText.setText("No file exists for this note.")
                         }
                     }
                 }
