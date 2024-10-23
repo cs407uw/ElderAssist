@@ -223,9 +223,10 @@ class NoteListFragment(
             Log.d("LoginFragment", "Loaded user: ${user.userName}, ID: ${user.userId}")
 
             // 确保 user 不为空，防止空指针错误
-                noteDB.deleteDao().delete(user.userId)
-                Log.d("LoginFragment", "User and notes deleted for userId: ${user.userId}")
-
+            if (user == null) {
+                Log.e("NoteListFragment", "User not found in database: $userName")
+                return@launch
+            }
 
             // 清空 ViewModel 中的用户状态
             userPasswdKV.edit().remove(userName).apply()

@@ -140,6 +140,7 @@ class LoginFragment(
             Log.d("LoginFragment", "storedPassword: $storedPassword")
             if (storedPassword == hashedPassword) {
                 // The user exists and the password is correct, proceed with login
+                //userViewModel.setUser(UserState(0, username, password))
                 true
             } else {
                 // The user exists but the password is incorrect, display an error
@@ -149,7 +150,7 @@ class LoginFragment(
             val newUser = User(userName = name)
             noteDB.userDao().insert(newUser)
             Log.d("LoginFragment", "User inserted successfully")
-
+            //userViewModel.setUser(UserState(newUser.userId, username, password))
 
             userPasswdKV.edit()
                 .putString(name, hashedPassword)
