@@ -20,6 +20,8 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.util.Calendar
 import android.util.Log
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 
 class NoteContentFragment(
     private val injectedUserViewModel: UserViewModel? = null
@@ -158,6 +160,15 @@ class NoteContentFragment(
         }
     }
 
+    //NavController
+    private fun findNavControllerSafely(): NavController? {
+        return try {
+            findNavController()
+        } catch (e: IllegalStateException) {
+            null
+        }
+    }
+
     private fun saveContent() {
         // TODO: Retrieve the title and content from EditText fields
         val title = titleEditText.text.toString()
@@ -197,9 +208,16 @@ class NoteContentFragment(
                 noteDB.noteDao().upsertNote(note, userId)
 
                 // Switch back to the main thread to navigate back to the previous screen
-                withContext(Dispatchers.Main) {
-                    findNavController().popBackStack()
+                val navController = findNavControllerSafely()
+                if (navController != null) {
+                    withContext(Dispatchers.Main) {
+                        findNavController().popBackStack()
+                    }// 进行导航
+                } else {
+                    Log.e("NoteContentFragment", "NavController not found")
+                    // 你可以处理没有找到NavController的情况，比如显示错误提示
                 }
+
             }
         }
         // TODO: Launch a coroutine to save the note in the background (non-UI thread)
