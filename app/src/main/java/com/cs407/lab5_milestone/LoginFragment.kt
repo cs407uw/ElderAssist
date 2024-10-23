@@ -107,7 +107,7 @@ class LoginFragment(
                         findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
                     } else {
                         //log
-                        Log.d("LoginFragment", "Login failed: incorrect username or password")
+                        Log.d("LoginFragment", getString(R.string.fail_login))
 
                         errorTextView.text = "Login failed. Incorrect username or password."
                         errorTextView.visibility = View.VISIBLE
