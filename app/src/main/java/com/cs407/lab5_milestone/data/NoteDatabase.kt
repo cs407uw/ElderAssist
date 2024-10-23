@@ -39,13 +39,13 @@ data class Note(
 )
 class Converters {
     @TypeConverter
-    fun fromTimestamp(value: Long?): Date? {
-        return value?.let { Date(it) }
+    fun fromTimestamp(value: Long): Date {
+        return Date(value)
     }
 
     @TypeConverter
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time
+    fun dateToTimestamp(date: Date): Long {
+        return date.time
     }
 }
 @Entity(
@@ -69,10 +69,10 @@ data class NoteSummary(
 interface UserDao {
 
     @Query("SELECT * FROM user WHERE userName = :name")
-    suspend fun getByName(name: String): User?
+    suspend fun getByName(name: String): User
 
     @Query("SELECT * FROM user WHERE userId = :id")
-    suspend fun getById(id: Int): User?
+    suspend fun getById(id: Int): User
 
     @Query("""
         SELECT * FROM User, Note, UserNoteRelation
@@ -92,8 +92,8 @@ interface UserDao {
     """)
     fun getUsersWithNoteListsByIdPaged(id: Int): PagingSource<Int, NoteSummary>
 
-    @Insert
-    suspend fun insert(user: User): Long
+    @Insert(entity=User::class)
+    suspend fun insert(user: User)
 }
 
 @Dao
@@ -101,7 +101,7 @@ interface NoteDao {
 
     // 根据 noteId 获取 Note 实体
     @Query("SELECT * FROM note WHERE noteId = :id")
-    suspend fun getById(id: Int): Note?
+    suspend fun getById(id: Int): Note
 
     // 根据 SQLite 的 rowId 获取 noteId
     @Query("SELECT noteId FROM note WHERE rowid = :rowId")
@@ -155,8 +155,7 @@ interface DeleteDao {
 
     @Transaction
     suspend fun delete(userId: Int) {
-        val notesIds = getAllNoteIdsByUser(userId)
-        deleteNotes(notesIds)
+        deleteNotes(getAllNoteIdsByUser(userId))
         deleteUser(userId)
     }
 }
@@ -177,7 +176,7 @@ abstract class NoteDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     NoteDatabase::class.java,
-                    "note_database"
+                    context.getString(R.string.note_database)
                 ).build()
                 INSTANCE = instance
                 instance

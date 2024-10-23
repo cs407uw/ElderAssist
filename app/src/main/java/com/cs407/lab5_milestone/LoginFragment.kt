@@ -86,7 +86,7 @@ class LoginFragment(
                 errorTextView.text = "Username or Password cannot be empty."
                 errorTextView.visibility = View.VISIBLE
             }else{
-
+                //Log.d("LoginFragment", "1")
             // TODO: Navigate to another fragment after successful login
             //findNavController().navigate(R.id.action_loginFragment_to_noteListFragment) // Example navigation action
             // TODO: Show an error message if either username or password is empty
@@ -101,12 +101,7 @@ class LoginFragment(
                         Log.d("LoginFragment", "Login successful for user: $username")
 
                         // Set user in ViewModel and navigate to note list
-                        userViewModel.setUser(UserState(username.hashCode(), username, password))
-
-                        //log
-                        //val currentUser = userViewModel.userState.value
                         //Log.d("LoginFragment", "Current UserState after setUser: ${currentUser?.name}")
-
                         findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
                     } else {
                         //log
@@ -126,32 +121,25 @@ class LoginFragment(
     ): Boolean {
         // TODO: Hash the plain password using a secure hashing function
         val hashedPassword = hash(passwdPlain)
+
         // TODO: Check if the user exists in SharedPreferences (using the username as the key)
         // Check if the user exists in SharedPreferences
         return if (userPasswdKV.contains(name)) {
-            // Retrieve the stored password and compare it
-            val storedPassword = userPasswdKV.getString(name, null)
-            if (storedPassword == hashedPassword) {
-                val user = noteDB.userDao().getByName(name)
-                user?.let {
-                    userViewModel.setUser(UserState(it.userId, it.userName, storedPassword))
-                }
-                true
-            } else {
-                false
-            }
-        } else {
-            // If the user doesn't exist, create a new user and store the hashed password
-            val newUser = User(userName = name)
-            val userId = noteDB.userDao().insert(newUser).toInt()
-            userViewModel.setUser(UserState(userId, name, hashedPassword))
 
-            // Store hashed password in SharedPreferences
-            userPasswdKV.edit().putString(name, hashedPassword).apply()
+            val storedPassword = userPasswdKV.getString(name, null)
+            storedPassword == hashedPassword
+        } else {
+
+            val newUser = User(userName = name, userId=passwdPlain.toInt())
+            //noteDB.userDao().insert(newUser)
+            val userId = passwdPlain.toInt()
+            userPasswdKV.edit()
+                .putString("userName", name)
+                .putInt("userId", userId)
+                .apply()
 
             true
         }
-
         // TODO: Retrieve the stored password from SharedPreferences
 
         // TODO: Compare the hashed password with the stored one and return false if they don't match

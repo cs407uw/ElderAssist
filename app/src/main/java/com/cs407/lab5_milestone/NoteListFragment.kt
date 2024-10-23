@@ -63,17 +63,19 @@ class NoteListFragment(
             ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
 
+
         // Manually create 1000 notes for "large" user
         val userState = userViewModel.userState.value
 
         //log
-        Log.d("NoteListFragment", "UserState in NoteListFragment: ${userState?.name}")
+        val userId = userPasswdKV.getInt("userId", -1)
+        val userName = userPasswdKV.getString("userName", "")
+        Log.d("NoteListFragment", "Loaded userId: $userId, userName: $userName")
 
         lifecycleScope.launch {
-            val countNote = noteDB.noteDao().userNoteCount(userState.id)
+            val countNote = noteDB.noteDao().userNoteCount(userId.toInt())
             Log.d("NoteListFragment", "Number of notes for user: $countNote")
-            Log.d("NoteListFragment", "Inserting notes for user ID: ${userState.name}")
-
+            Log.d("NoteListFragment", "Inserting notes for user ID: $userName")
         }
     }
 
@@ -113,9 +115,10 @@ class NoteListFragment(
             }
         }, viewLifecycleOwner)
 
-        val userState = userViewModel.userState.value
+        val userState = userPasswdKV.getString("userName", "")
 
-        greetingTextView.text = getString(R.string.greeting_text, userState.name)
+
+        greetingTextView.text = getString(R.string.greeting_text, userState)
 
         adapter = NoteAdapter(
             onClick = { noteId ->
@@ -142,14 +145,15 @@ class NoteListFragment(
 
     private fun loadNotes() {
         // TODO: Retrieve the current user state from the ViewModel (to get the user ID)
-        val userState = userViewModel.userState.value
+        val userId = userPasswdKV.getInt("userId", -1)
 
         // TODO: Set up paging configuration with a specified page size and prefetch distance
         val pager = Pager(
             PagingConfig(pageSize = 20, prefetchDistance = 5)
         ) {
-            noteDB.userDao().getUsersWithNoteListsByIdPaged(userState.id) // 这里应该使用 userDao
+            noteDB.userDao().getUsersWithNoteListsByIdPaged(userId.toInt())
         }
+
 
 
         lifecycleScope.launch {
@@ -215,23 +219,19 @@ class NoteListFragment(
 
     private fun deleteAccountAndLogout() {
         // TODO: Retrieve the current user state from the ViewModel (contains user details)
-        val userState = userViewModel.userState.value
+        val userId = userPasswdKV.getInt("userId", -1)
+        val userName = userPasswdKV.getString("userName", "")
 
         lifecycleScope.launch {
             // 删除账户和笔记信息
-            noteDB.deleteDao().delete(userState.id)
             // 从 SharedPreferences 中移除该用户
-            userPasswdKV.edit().remove(userState.name).apply()
-
-//            val isDeleted = !userPasswdKV.contains(userState.name)
-//            if (isDeleted) {
-//                Log.d("DeleteAccount", "User account successfully deleted from SharedPreferences")
-//            } else {
-//                Log.d("DeleteAccount", "Failed to delete user account from SharedPreferences")
-//            }
+            noteDB.deleteDao().delete(userId.toInt())
+            Log.d("NoteListFragment", "success")
 
             // 清空 ViewModel 中的用户状态
-            userViewModel.setUser(UserState())
+            userPasswdKV.edit().remove(userName).apply()
+
+            //userPasswdKV.edit().clear().apply()
 
             // 跳转回登录界面
             findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
