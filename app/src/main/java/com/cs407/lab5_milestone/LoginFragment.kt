@@ -99,9 +99,11 @@ class LoginFragment(
                     if (success) {
                         //log
                         Log.d("LoginFragment", "Login successful for user: $username")
+                        //logSharedPreferences()
 
                         // Set user in ViewModel and navigate to note list
                         //Log.d("LoginFragment", "Current UserState after setUser: ${currentUser?.name}")
+                        userViewModel.setUser(UserState(0, username, password))
                         findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
                     } else {
                         //log
@@ -115,27 +117,40 @@ class LoginFragment(
         }
     }
 
+    //Check
+//    private fun logSharedPreferences() {
+//        val allEntries = userPasswdKV.all
+//        for ((key, value) in allEntries) {
+//            Log.d("SharedPreferences", "Key: $key, Value: $value")
+//        }
+//    }
+
     private suspend fun getUserPasswd(
         name: String,
         passwdPlain: String
     ): Boolean {
         // TODO: Hash the plain password using a secure hashing function
+
         val hashedPassword = hash(passwdPlain)
 
         // TODO: Check if the user exists in SharedPreferences (using the username as the key)
         // Check if the user exists in SharedPreferences
         return if (userPasswdKV.contains(name)) {
 
-            val storedPassword = userPasswdKV.getString(name, null)
-            storedPassword == hashedPassword
+            val storedPassword = userPasswdKV.getString(name, "")
+            Log.d("LoginFragment", "storedPassword: $storedPassword")
+            if (storedPassword == hashedPassword) {
+                // The user exists and the password is correct, proceed with login
+                true
+            } else {
+                // The user exists but the password is incorrect, display an error
+                false
+            }
         } else {
-
-            val newUser = User(userName = name, userId=passwdPlain.toInt())
+            //val newUser = User(userId=passwdPlain.toInt(),userName = name)
             //noteDB.userDao().insert(newUser)
-            val userId = passwdPlain.toInt()
             userPasswdKV.edit()
-                .putString("userName", name)
-                .putInt("userId", userId)
+                .putString(name, hashedPassword)
                 .apply()
 
             true
