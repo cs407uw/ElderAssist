@@ -31,6 +31,8 @@ import kotlinx.coroutines.runBlocking
 import java.util.Calendar
 import androidx.paging.PagingSource
 import android.util.Log
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class NoteListFragment(
     private val injectedUserViewModel: UserViewModel? = null
@@ -224,7 +226,18 @@ class NoteListFragment(
             // 删除账户和笔记信息
             // 从 SharedPreferences 中移除该用户
             //noteDB.deleteDao().delete(userId.toInt())
+            val user = withContext(Dispatchers.IO) {
+                noteDB.userDao().getByName(userName)
+            }
+            Log.d("LoginFragment", "Loaded user: ${user.userName}, ID: ${user.userId}")
 
+            // 确保 user 不为空，防止空指针错误
+            if (user != null) {
+                noteDB.deleteDao().delete(user.userId)
+                Log.d("LoginFragment", "User and notes deleted for userId: ${user.userId}")
+            } else {
+                Log.d("LoginFragment", "User not found in database")
+            }
 
             // 清空 ViewModel 中的用户状态
             userPasswdKV.edit().remove(userName).apply()

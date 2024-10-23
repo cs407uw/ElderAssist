@@ -136,7 +136,6 @@ class LoginFragment(
         // TODO: Check if the user exists in SharedPreferences (using the username as the key)
         // Check if the user exists in SharedPreferences
         return if (userPasswdKV.contains(name)) {
-
             val storedPassword = userPasswdKV.getString(name, "")
             Log.d("LoginFragment", "storedPassword: $storedPassword")
             if (storedPassword == hashedPassword) {
@@ -147,8 +146,11 @@ class LoginFragment(
                 false
             }
         } else {
-            //val newUser = User(userId=passwdPlain.toInt(),userName = name)
-            //noteDB.userDao().insert(newUser)
+            val newUser = User(userName = name)
+            noteDB.userDao().insert(newUser)
+            Log.d("LoginFragment", "User inserted successfully")
+
+
             userPasswdKV.edit()
                 .putString(name, hashedPassword)
                 .apply()
