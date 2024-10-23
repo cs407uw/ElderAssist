@@ -65,16 +65,7 @@ class NoteListFragment(
             ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
         }
 
-        //log
-//        val userId = userPasswdKV.getInt("userId", -1)
-//        val userName = userPasswdKV.getString("userName", "")
-//        Log.d("NoteListFragment", "Loaded userId: $userId, userName: $userName")
 
-//        lifecycleScope.launch {
-//            val countNote = noteDB.noteDao().userNoteCount(userId.toInt())
-//            Log.d("NoteListFragment", "Number of notes for user: $countNote")
-//            Log.d("NoteListFragment", "Inserting notes for user ID: $userName")
-//        }
         val userName = userViewModel.userState.value?.name ?: ""
         Log.d("NoteListFragment", "Loaded userName: $userName")
     }
@@ -232,12 +223,9 @@ class NoteListFragment(
             Log.d("LoginFragment", "Loaded user: ${user.userName}, ID: ${user.userId}")
 
             // 确保 user 不为空，防止空指针错误
-            if (user != null) {
                 noteDB.deleteDao().delete(user.userId)
                 Log.d("LoginFragment", "User and notes deleted for userId: ${user.userId}")
-            } else {
-                Log.d("LoginFragment", "User not found in database")
-            }
+
 
             // 清空 ViewModel 中的用户状态
             userPasswdKV.edit().remove(userName).apply()
