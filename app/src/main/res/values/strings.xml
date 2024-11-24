@@ -4,7 +4,7 @@
     <string name="password_hint">Enter Password</string>
     <string name="login_button">Log In or Sign Up</string>
     <string name="userPasswdKV">com.cs407.lab5_milestone.userPasswdKV</string>
-    <string name="fail_login">Wrong Username or Password</string>
+    <string name="fail_login">Need to Sign Up or Wrong Username or Password</string>
     <string name="login_screen">LoginScreen</string>
     <string name="note_list_screen">NoteListScreen</string>
     <string name="note_database">noteDatabase</string>
@@ -15,6 +15,9 @@
     <string name="greeting_text">Welcome %1$s!</string>
     <string name="welcome">welcom back</string>
     <string name="elder_a">ElderAssist</string>
-    <string name="create_account">New to ElderAssist? Create your account here</string>
+    <string name="create_account">New to ElderAssist? Create your account</string>
     <string name="image_description">logo</string>
+    <string name="signup">Sign Up</string>
+    <string name="createtext">Create Your Account Here</string>
+    <string name="link">here</string>
 </resources>
