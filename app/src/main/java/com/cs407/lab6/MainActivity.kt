@@ -31,7 +31,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var mFusedLocationProviderClient: FusedLocationProviderClient
-    private val mDestinationLatLng = LatLng(43.0753, -89.4034) // Bascom Hall
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +44,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        setLocationMarker(mDestinationLatLng, "Bascom Hall")
         checkLocationPermissionAndDrawPolyline()
     }
 
@@ -68,7 +66,6 @@ class MainActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (location != null) {
                     val currentLatLng = LatLng(location.latitude, location.longitude)
                     setLocationMarker(currentLatLng, "Current Location")
-                    drawPolyline(currentLatLng, mDestinationLatLng)
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
                 } else {
                     Toast.makeText(this, "Unable to get current location", Toast.LENGTH_SHORT).show()
