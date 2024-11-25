@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">AlderAssist</string>
+    <string name="cancel">Cancel</string>
+    <string name="tutorial_videos">Tutorial Videos</string>
+    <string name="search_hint">Search</string>
+    <string name="search">Search</string>
+    <string name="tutorials_title">ElderAssist Video</string>
+    <string name="home_button_desc">Navigate to Home</string>
+    <string name="videos_button_desc">Navigate to Videos</string>
+    <string name="blogs_button_desc">Navigate to Blogs</string>
+    <string name="profile_button_desc">Navigate to Profile</string>
+    <string name="settings_button_desc">Navigate to Settings</string>
+</resources>
