@@ -95,4 +95,21 @@ object ChatAgent {
             "Please specify the destination you'd like travel information for."
         }
     }
+    fun fetchAnswerFromApi(questionId: String, callback: (String) -> Unit) {
+        val apiUrl = "https://your-api-url.com/faqs/$questionId"
+        val request = Request.Builder().url(apiUrl).build()
+
+        OkHttpClient().newCall(request).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                callback("Error fetching answer")
+            }
+
+            override fun onResponse(call: Call, response: Response) {
+                val json = response.body?.string()
+                val answer = JSONObject(json).getString("answer")
+                callback(answer)
+            }
+        })
+    }
+
 }
