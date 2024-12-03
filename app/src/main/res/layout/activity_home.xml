@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:background="#FFFFFF"
     android:orientation="vertical"
     tools:context=".HomeActivity">
@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="16dp"
-        android:text="ElderAssist"
+        android:text="@string/app_title"
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold" />
@@ -31,14 +31,14 @@
             android:layout_width="0dp"
             android:layout_height="48dp"
             android:layout_weight="1"
-            android:hint="Search"
+            android:hint="@string/search_hint"
             android:padding="10dp" />
 
         <Button
             android:id="@+id/cancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Cancel" />
+            android:text="@string/cancel" />
     </LinearLayout>
 
     <!-- Welcome Text -->
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="8dp"
-        android:text="Welcome to ElderAssist"
+        android:text="@string/welcome_message"
         android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="italic" />
@@ -67,7 +67,7 @@
         <ImageView
             android:id="@+id/image1"
             android:layout_width="0dp"
-            android:layout_height="35dp"
+            android:layout_height="150dp"
             android:layout_rowWeight="1"
             android:layout_columnWeight="1"
             android:scaleType="centerCrop"
@@ -116,7 +116,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:background="@drawable/custom_button_background"
-            android:text="Home"
+            android:text="@string/button_home"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -127,29 +127,38 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:background="@drawable/custom_button_background"
-            android:text="Tutorials"
+            android:text="@string/button_tutorials"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/MapButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button_background"
+            android:text="@string/button_map"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+        <Button
+            android:id="@+id/ScanButton"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:layout_weight="1"
+            android:background="@drawable/custom_button_background"
+            android:text="@string/button_scan"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold" />
 
         <Button
-            android:id="@+id/mapButton"
+            android:id="@+id/chatButton"
             android:layout_width="0dp"
             android:layout_height="60dp"
             android:layout_weight="1"
             android:background="@drawable/custom_button_background"
-            android:text="Map"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/scanButton"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_background"
-            android:text="Scan"
+            android:text="@string/button_chat"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -160,7 +169,7 @@
             android:layout_height="60dp"
             android:layout_weight="1"
             android:background="@drawable/custom_button_background"
-            android:text="Me"
+            android:text="@string/button_me"
             android:textColor="#FFFFFF"
             android:textSize="12sp"
             android:textStyle="bold" />

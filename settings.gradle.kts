@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "alderassist_tutorial"
+rootProject.name = "elderassist_tutorial"
 include(":app")
