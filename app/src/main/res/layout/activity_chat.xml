@@ -7,55 +7,70 @@
     android:layout_height="match_parent"
     tools:context=".ChatActivity">
 
+    <!-- Back Button -->
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:backgroundTint="#673AB7"
+        android:text="@string/back_button_label"
+        android:textColor="@color/white"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <!-- FAQ Section -->
     <LinearLayout
         android:id="@+id/faqSection"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:background="#E8E8E8"
         android:orientation="vertical"
         android:padding="8dp"
-        android:background="#E8E8E8"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/backButton">
 
         <TextView
             android:id="@+id/faqTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingBottom="8dp"
             android:text="@string/faq_title"
-            android:textColor="@color/white"
-            android:background="@color/black"
+            android:textColor="@color/black"
             android:textSize="18sp"
-            android:textStyle="bold"
-            android:paddingBottom="8dp" />
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/faqButton1"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/faq_question_1"
             android:background="@color/white"
-            android:textColor="@color/black"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
+            android:text="@string/faq_question_1"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/faqButton2"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/faq_question_2"
             android:background="@color/white"
-            android:textColor="@color/black"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
+            android:text="@string/faq_question_2"
+            android:textColor="@color/black" />
 
         <Button
             android:id="@+id/faqButton3"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/faq_question_3"
             android:background="@color/white"
-            android:textColor="@color/black"
-            style="@style/Widget.MaterialComponents.Button.TextButton" />
+            android:text="@string/faq_question_3"
+            android:textColor="@color/black" />
     </LinearLayout>
 
     <!-- Chat Output Area -->
@@ -112,9 +127,7 @@
             android:id="@+id/chatInput"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:hint="@string/chat_input_hint"
-            android:inputType="text"
             android:imeOptions="actionSend"
             android:textColor="#000000"
             android:textColorHint="#888888"
@@ -128,6 +141,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/chat_send_button"
+            android:backgroundTint="#673AB7"
             android:textAllCaps="false"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

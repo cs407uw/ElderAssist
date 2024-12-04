@@ -6,6 +6,7 @@ import android.view.Gravity
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
@@ -17,6 +18,8 @@ class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
     private lateinit var faqButton2: Button
     private lateinit var faqButton3: Button
     private lateinit var chatOutputContainer: LinearLayout
+    private lateinit var backButton: Button
+    private lateinit var chatOutputScrollView: ScrollView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,9 +31,13 @@ class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
         faqButton2 = findViewById(R.id.faqButton2)
         faqButton3 = findViewById(R.id.faqButton3)
         chatOutputContainer = findViewById(R.id.chatOutputContainer)
+        backButton = findViewById(R.id.backButton)
+        chatOutputScrollView = findViewById(R.id.chatOutputScrollView)
 
-        // Welcome message
-        addChatBubble(false, getString(R.string.chat_welcome_message))
+        // Handle back button click
+        backButton.setOnClickListener {
+            finish() // Close the ChatActivity and return to the previous page
+        }
 
         // FAQ Button Actions
         faqButton1.setOnClickListener {
@@ -101,5 +108,10 @@ class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
 
         chatBubble.addView(messageText)
         chatOutputContainer.addView(chatBubble)
+
+        // Scroll to the bottom of the chat output
+        chatOutputScrollView.post {
+            chatOutputScrollView.fullScroll(ScrollView.FOCUS_DOWN)
+        }
     }
 }

@@ -20,9 +20,10 @@
     <string name="settings_button_desc">Navigate to Settings</string>
     <string name="chat_input_hint">Type your message</string>
     <string name="chat_send_button">Send</string>
-    <string name="faq_title">ChatAgent with Frequently Asked Questions</string>
+    <string name="faq_title">Frequently Asked Questions</string>
     <string name="chat_welcome_message">Welcome to use ElderAssist AI Chat! I am ChatElder. How can I help you today?</string>
     <string name="faq_question_1">1.How do I find more information about Tylenol?</string>
     <string name="faq_question_2">2.Can you show me a travel plan to New York?</string>
     <string name="faq_question_3">3.What customer support options are available?</string>
+    <string name='back_button_label'>back</string>
 </resources>
