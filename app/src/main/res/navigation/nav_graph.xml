@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/loginFragment">
+
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.cs407.elderassist_tutorial.LoginFragment"
+        android:label="@string/login_screen"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment"/>
+        <action
+            android:id="@+id/action_loginFragment_to_noteListFragment"
+            app:destination="@id/noteListFragment"
+            app:popUpTo="@id/loginFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/noteListFragment"
+        android:name="com.cs407.elderassist_tutorial.NoteListFragment"
+        android:label="@string/note_list_screen"
+        tools:layout="@layout/fragment_note_list">
+<!--        <action-->
+<!--            android:id="@+id/action_noteListFragment_to_noteContentFragment"-->
+<!--            app:destination="@id/noteContentFragment"/>-->
+        <action
+            android:id="@+id/action_noteListFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:popUpTo="@id/noteListFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+
+    <fragment
+        android:id="@+id/signUpFragment"
+        android:name="com.cs407.elderassist_tutorial.SignUpFragment"
+        android:label="@string/signup"
+        tools:layout="@layout/fragment_sign_up">
+        <action
+            android:id="@+id/action_signUpFragment_to_loginFragment"
+            app:destination="@id/noteListFragment"
+            app:popUpTo="@id/signUpFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+
+
+</navigation>
