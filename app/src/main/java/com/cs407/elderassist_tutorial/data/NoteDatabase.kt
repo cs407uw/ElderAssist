@@ -65,6 +65,28 @@ data class NoteSummary(
     val noteAbstract: String,
     val lastEdited: Date
 )
+
+//map
+@Entity(tableName = "saved_location")
+data class SavedLocation(
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    val latitude: Double,
+    val longitude: Double
+)
+//map
+@Dao
+interface SavedLocationDao {
+
+    @Insert
+    suspend fun insert(location: SavedLocation)
+
+    @Query("SELECT * FROM saved_location")
+    suspend fun getAllLocations(): List<SavedLocation>
+
+    @Query("DELETE FROM saved_location WHERE id = :id")
+    suspend fun deleteById(id: Int)
+}
+
 @Dao
 interface UserDao {
 

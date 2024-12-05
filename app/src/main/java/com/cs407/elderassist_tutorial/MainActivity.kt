@@ -80,6 +80,7 @@ class MainActivity : AppCompatActivity() {
         val blogsButton = findViewById<ImageButton>(R.id.blogsButton)
         val profileButton = findViewById<ImageButton>(R.id.profileButton)
         val settingsButton = findViewById<ImageButton>(R.id.settingsButton)
+        val mapButton = findViewById<ImageButton>(R.id.mapButton)
 
         // Navigate to HomeActivity
         homeButton.setOnClickListener {
@@ -102,6 +103,11 @@ class MainActivity : AppCompatActivity() {
         profileButton.setOnClickListener {
             // Intent for ProfileActivity (Create if needed)
             Log.d("MainActivity", "Profile Button Clicked")
+        }
+
+        mapButton.setOnClickListener {
+            val intent = Intent(this, MapActivity::class.java)
+            startActivity(intent) // Navigate to MapActivity
         }
 
         // Placeholder for Settings Section

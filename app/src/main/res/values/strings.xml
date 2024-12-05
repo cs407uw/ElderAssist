@@ -47,4 +47,6 @@
     <string name="signup">Sign Up</string>
     <string name="createtext">Create Your Account Here</string>
     <string name="link">here</string>
+    <string name="map_button_desc">Navigate to Map</string>
+
 </resources>
