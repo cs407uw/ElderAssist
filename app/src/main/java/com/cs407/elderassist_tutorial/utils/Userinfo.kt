@@ -11,9 +11,16 @@ data class UserInfo(
  * @return JSON 字符串形式的用户信息
  */
 fun generateUserInfo(userName: String): String {
-    val preferences = listOf("pharmacy", "medication", "delivery").shuffled().take(2)
+    val preferences = listOf("BoomBoom Nasal Stick", "Dulcolax", "AZO",
+                            "Voltaren", "Mucinex DM", "DayQuil/NyQuil",
+                            "Isopropyl Alcohol", "MiraLAX", "Tylenol",
+                            "NasalFresh", "Neosporin", "Iberogast",
+                            "Zyrtec", "Advil", "XYZAL",
+                            "Biofreeze", "Genexa", "Ricola",
+                            "Imodium", "Abreva", "Halls",
+                            "Vicks", "Prevacid", "Wonderbelly").shuffled().take(2)
     val location = listOf("Madison, WI", "New York, NY", "Chicago, IL").random()
-    val age = (18..60).random()
+    val age = (60..100).random()
 
     val userInfo = UserInfo(age = age, location = location, preferences = preferences)
     return Gson().toJson(userInfo) // 将对象序列化为 JSON

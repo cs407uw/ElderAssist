@@ -13,6 +13,8 @@ import com.opencsv.CSVReader
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 
+import com.cs407.elderassist_tutorial.utils.SearchUtils
+
 class LoginMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,10 +47,26 @@ class LoginMainActivity : AppCompatActivity() {
                 Log.d("CSVImporter", "CSV success")
                 // 查询并打印数据库内容
                 logDatabaseInfo()
+
+//                // 测试 searchPharmaciesByMedication
+//                val medicineName = "Tylenol" // 替换为你的 CSV 数据中的药品名称
+//                val pharmacies = withContext(Dispatchers.IO) {
+//                    SearchUtils.searchPharmaciesByMedication(applicationContext, medicineName)
+//                }
+//                Log.d("LoginMainActivity", "Pharmacies for $medicineName: $pharmacies")
+//
+//                // 测试 searchMedicationsByPharmacy
+//                val pharmacyName = "CVS Pharmacy" // 替换为你的 CSV 数据中的药店名称
+//                val medications = withContext(Dispatchers.IO) {
+//                    SearchUtils.searchMedicationsByPharmacy(applicationContext, pharmacyName)
+//                }
+//                Log.d("LoginMainActivity", "Medications for $pharmacyName: $medications")
+
             } catch (e: Exception) {
                 Log.e("CSVImporter", "CSV error: ${e.message}")
             }
         }
+
     }
 
     // 查询并打印数据库内容
