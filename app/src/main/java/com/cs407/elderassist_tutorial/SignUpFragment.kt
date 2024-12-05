@@ -1,7 +1,6 @@
 package com.cs407.elderassist_tutorial
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
@@ -19,6 +18,7 @@ import java.security.MessageDigest
 import android.util.Log
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.ViewModelProvider
+import com.cs407.elderassist_tutorial.utils.generateUserInfo
 
 class SignUpFragment : Fragment() {
     private lateinit var usernameEditText: EditText
@@ -26,7 +26,7 @@ class SignUpFragment : Fragment() {
     private lateinit var signUpButton: Button
     private lateinit var errorTextView: TextView
 
-    private lateinit var userPasswdKV: SharedPreferences
+    //private lateinit var userPasswdKV: SharedPreferences
     private lateinit var noteDB: NoteDatabase
     private lateinit var userViewModel: UserViewModel
 
@@ -44,7 +44,7 @@ class SignUpFragment : Fragment() {
         signUpButton = view.findViewById(R.id.signUpButton)
         errorTextView = view.findViewById(R.id.errorTextView)
 
-        userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
+        //userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
         noteDB = NoteDatabase.getDatabase(requireContext())
 
         return view
@@ -75,11 +75,15 @@ class SignUpFragment : Fragment() {
                     if (success) {
                         Log.d("SignUpFragment", "Sign-up successful for user: $username")
 
-                        // 设置 UserViewModel 的用户信息
-                        val userId = noteDB.userDao().getByName(username).userId
-                        userViewModel.setUser(UserState(userId, username, password))
 
-                        findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
+                        val user = withContext(Dispatchers.IO) {
+                            val database = NoteDatabase.getDatabase(requireContext()) // 获取数据库实例
+                            database.userDao().getUserByName(username) // 调用 UserDao 的方法
+                        }
+                        user?.let {
+                            userViewModel.setUser(UserState(it.userId, it.userName, it.passwd, it.randomInfo))
+                            findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
+                        }
                     } else {
                         errorTextView.text = "User already exists or sign-up failed."
                         errorTextView.visibility = View.VISIBLE
@@ -89,21 +93,27 @@ class SignUpFragment : Fragment() {
         }
     }
 
-    private suspend fun createUser(
-        name: String,
-        passwdPlain: String
-    ): Boolean {
-        val hashedPassword = hash(passwdPlain)
 
-        return if (userPasswdKV.contains(name)) {
-            false
-        } else {
-            val newUser = User(userName = name)
-            noteDB.userDao().insert(newUser)
-            userPasswdKV.edit()
-                .putString(name, hashedPassword)
-                .apply()
+    private suspend fun createUser(
+        username: String,
+        password: String
+    ): Boolean {
+        val hashedPassword = hash(password)
+        val randominfo= generateUserInfo(username)
+
+        // 获取数据库实例
+        val database = NoteDatabase.getDatabase(requireContext())
+        val userDao = database.userDao() // 从数据库获取 UserDao 实例
+
+        // 检查用户是否存在
+        val existingUser = userDao.getUserByName(username)
+        return if (existingUser == null) {
+            // 创建新用户
+            val newUser = User(userName = username, passwd = hashedPassword, randomInfo = randominfo)
+            userDao.insertUser(newUser) // 插入新用户
             true
+        } else {
+            false
         }
     }
 

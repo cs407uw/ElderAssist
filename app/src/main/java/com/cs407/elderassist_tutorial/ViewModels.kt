@@ -6,7 +6,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class UserState(
-    val id: Int = 0, val name: String = "", val passwd: String = ""
+    val id: Int = 0,
+    val name: String = "",
+    val passwd: String = "",
+    val randomInfo: String = "" // 添加随机信息字段
 )
 
 class UserViewModel : ViewModel() {

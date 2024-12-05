@@ -67,7 +67,8 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     // To use Kotlin Symbol Processing (KSP)
     ksp(libs.androidx.room.compiler)
-
+    implementation ("com.opencsv:opencsv:5.7.1")
+    implementation ("com.google.code.gson:gson:2.8.9")
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
 

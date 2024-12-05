@@ -1,7 +1,6 @@
 package com.cs407.elderassist_tutorial
 
-import android.content.Context
-import android.content.SharedPreferences
+
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
@@ -31,7 +30,7 @@ class LoginFragment(
 
     private lateinit var userViewModel: UserViewModel
 
-    private lateinit var userPasswdKV: SharedPreferences
+    //private lateinit var userPasswdKV: SharedPreferences
     private lateinit var noteDB: NoteDatabase
 
     override fun onCreateView(
@@ -54,7 +53,7 @@ class LoginFragment(
         //log
         Log.d("LoginFragment", "Login screen loaded")
 
-        userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
+        //userPasswdKV = requireContext().getSharedPreferences(getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
         noteDB = NoteDatabase.getDatabase(requireContext())
 
         return view
@@ -82,13 +81,14 @@ class LoginFragment(
                 errorTextView.visibility = View.VISIBLE
             } else {
                 lifecycleScope.launch {
-                    val success = withContext(Dispatchers.IO) {
-                        getUserPasswd(username, password)
+                    val user = withContext(Dispatchers.IO) {
+                        val database = NoteDatabase.getDatabase(requireContext())
+                        database.userDao().getUserByName(username)
                     }
 
-                    if (success) {
+                    if (user!=null&& validatePassword(password, user.passwd)) {
                         Log.d("LoginFragment", "Login successful for user: $username")
-                        userViewModel.setUser(UserState(noteDB.userDao().getByName(username).userId, username, password))
+                        userViewModel.setUser(UserState(user.userId, username, password, user.randomInfo))
                         findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
                     } else {
                         Log.d("LoginFragment", getString(R.string.fail_login))
@@ -105,17 +105,9 @@ class LoginFragment(
         }
     }
 
-    private suspend fun getUserPasswd(
-        name: String,
-        passwdPlain: String
-    ): Boolean {
-        val hashedPassword = hash(passwdPlain)
-        return if (userPasswdKV.contains(name)) {
-            val storedPassword = userPasswdKV.getString(name, "")
-            storedPassword == hashedPassword
-        } else {
-            false
-        }
+
+    private fun validatePassword(inputPassword: String, storedPassword: String): Boolean {
+        return hash(inputPassword) == storedPassword
     }
 
     private fun hash(input: String): String {

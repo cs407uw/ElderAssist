@@ -1,0 +1,25 @@
+PharmacyID,PharmacyName,Address,Website,OperatingHours,Phone,Rating,InsuranceLink,MedicationName,Medicine Name,MedicationDescription
+1,Walgreens Pharmacy,"3700 University Ave, Madison, WI 53705",https://www.walgreens.com,Mon-Fri: 8:00 AM - 10:00 PM ; Sat-Sun: 9:00 AM - 5:00 PM,608-238-7109,3.9/5,https://www.walgreens.com/findcare/content/find-prescription-coverage,"BoomBoom Nasal Stick, Dulcolax, AZO, Voltaren, Mucinex DM, DayQuil/NyQuil",BoomBoom Nasal Stick,Enhances breathing with natural oils.
+2,CVS Pharmacy,"6701 Mineral Point Rd, Madison, WI 53705",https://www.cvs.com,Opens at 9:00 AM daily,608-833-4588,3.7/5,https://www.cvshealth.com/services/prescription-drug-coverage.html,"CVS Health, MiraLAX, Isopropyl Alcohol",Dulcolax,Provides relief from constipation.
+3,Union Corners Clinic Pharmacy (UW Health),"2402 Winnebago St, Madison, WI 53704",https://www.uwhealth.org,Mon-Fri: 9:00 AM - 7:00 PM ; Sat: 9:00 AM - 5:00 PM ; Closed Sun,608-242-6862,N/A,https://www.uwhealth.org/billing-insurance#5dbFwdk3ZNTyJQfyfrgtxx,"Tylenol, NasalFresh, Neosporin, Iberogast",AZO,Eases urinary pain and discomfort.
+4,East Madison Hospital Pharmacy (UW Health),"4602 Eastpark Blvd, Madison, WI",https://www.uwhealth.org,Please visit the website or call for specific hours,608-240-4265,N/A,https://www.uwhealth.org/billing-insurance#5dbFwdk3ZNTyJQfyfrgtxx,"Tylenol, Zyrtec, Neosporin, Tylenol, Advil, Mucinex DM, DayQuil/NyQuil",Voltaren,Relieves arthritis pain topically.
+5,1 S Park St Medical Center Pharmacy (UW Health),"1 S Park St, Madison, WI",https://www.uwhealth.org,Please visit the website or call for specific hours,608-287-2400,N/A,https://www.uwhealth.org/billing-insurance#5dbFwdk3ZNTyJQfyfrgtxx,"Dulcolax, Voltaren, BoomBoom Nasal Stick, Isopropyl Alcohol",Mucinex DM,Loosens mucus and suppresses cough.
+6,Walgreens Pharmacy,"311 E Campus Mall, Madison, WI 53715",https://www.walgreens.com,Opens at 9:00 AM daily,608-251-0042,3.5/5,https://www.walgreens.com/findcare/content/find-prescription-coverage,"Zyrtec, Tylenol, XYZAL, Biofreeze, Genexa, Ricola, Mucinex DM, DayQuil/NyQuil",DayQuil/NyQuil,Treats cold and flu symptoms.
+7,Walgreens Specialty Pharmacy,"432 S Park St, Madison, WI 53715",https://www.walgreens.com,Mon-Fri: Opens at 8:30 AM,608-416-8501,N/A,https://www.walgreens.com/findcare/content/find-prescription-coverage,"Imodium, Abreva, Halls, Vicks, Prevacid, Wonderbelly, Tylenol, Advil",Isopropyl Alcohol,Used for cleaning and disinfection.
+8,Walgreens Pharmacy,"676 State St, Madison, WI 53703",https://www.walgreens.com,7:00 AM - 10:00 PM daily,608-257-2556,3.5/5,https://www.walgreens.com/findcare/content/find-prescription-coverage,"Tylenol, Zyrtec, Advil, Mucinex DM",MiraLAX,Treats occasional constipation.
+9,Walgreens Pharmacy,"7810 Mineral Point Rd, Madison, WI 53717",https://www.walgreens.com,24 hours,608-833-1222,3.9/5,https://www.walgreens.com/findcare/content/find-prescription-coverage,"Tylenol, Advil, Boiron, Vicks, Mucinex DM, DayQuil/NyQuil",Tylenol,Alleviates mild to moderate pain.
+10,Evjue Clinic Pharmacy (UW Health),"3434 E Washington Ave, Madison, WI",https://www.uwhealth.org,Please visit the website or call for specific hours,608-204-2680,N/A,https://www.uwhealth.org/billing-insurance#5dbFwdk3ZNTyJQfyfrgtxx,"Neosporin, Tylenol, Advil, Mucinex DM, DayQuil/NyQuil",NasalFresh,Cleanses nasal passages with irrigation.
+,,,,,,,,,Neosporin,Prevents infection in minor cuts.
+,,,,,,,,,Iberogast,Relieves digestive symptoms and IBS.
+,,,,,,,,,Zyrtec,Manages allergic reactions and symptoms.
+,,,,,,,,,Advil,Reduces inflammation and relieves pain.
+,,,,,,,,,XYZAL,Provides 24-hour relief from allergies.
+,,,,,,,,,Biofreeze,Offers temporary relief from muscle pain.
+,,,,,,,,,Genexa,Organic treatment for cold symptoms.
+,,,,,,,,,Ricola,Soothes throat and relieves coughs.
+,,,,,,,,,Imodium,Controls symptoms of diarrhea.
+,,,,,,,,,Abreva,Treats and heals cold sores.
+,,,,,,,,,Halls,Soothes sore throats and coughs.
+,,,,,,,,,Vicks,Relieves cough and congestion.
+,,,,,,,,,Prevacid,Reduces stomach acid and treats GERD.
+,,,,,,,,,Wonderbelly,Antacid that neutralizes stomach acid.
