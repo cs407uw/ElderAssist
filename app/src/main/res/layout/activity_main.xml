@@ -139,7 +139,6 @@
             android:background="?android:attr/selectableItemBackground"
             android:padding="8dp" />
 
-
     </LinearLayout>
 
 </LinearLayout>
