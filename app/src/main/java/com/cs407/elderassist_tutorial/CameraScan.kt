@@ -32,6 +32,8 @@ import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import java.io.File
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class CameraScan : AppCompatActivity() {
     private lateinit var imageHolder: ImageView
@@ -42,6 +44,8 @@ class CameraScan : AppCompatActivity() {
 
     private val imageCaptureLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val cameraButton: Button = findViewById(R.id.cameraButton)
+            cameraButton.isEnabled = true
             if (result.resultCode == Activity.RESULT_OK && photoUri != null) {
                 try {
                     val imageBitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(photoUri!!))
@@ -88,6 +92,10 @@ class CameraScan : AppCompatActivity() {
 
         checkAndRequestPermissions()
         showImageSourceDialog()
+
+        val searchInMapButton: Button = findViewById(R.id.searchInMapButton)
+        searchInMapButton.setOnClickListener { searchInMap(it) }
+
     }
 
     private fun showImageSourceDialog() {
@@ -135,14 +143,20 @@ class CameraScan : AppCompatActivity() {
     }
 
     fun launchCamera(view: View) {
+        val cameraButton: Button = findViewById(R.id.cameraButton)
+        cameraButton.isEnabled = false
+
         val items = arrayOf<CharSequence>("Take Photos", "Add from Camera Roll")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Add Photos")
         builder.setItems(items) { _, item ->
             when (item) {
-                0 -> dispatchTakePictureIntent() // 拍照
-                1 -> imagePickLauncher.launch("image/*") // 从图库选择
+                0 -> dispatchTakePictureIntent()
+                1 -> imagePickLauncher.launch("image/*")
             }
+        }
+        builder.setOnDismissListener {
+            cameraButton.isEnabled = true
         }
         builder.show()
     }
@@ -154,9 +168,16 @@ class CameraScan : AppCompatActivity() {
             "${packageName}.fileprovider",
             createImageFile()
         )
+
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-        imageCaptureLauncher.launch(takePictureIntent)
+
+        if (takePictureIntent.resolveActivity(packageManager) != null) {
+            imageCaptureLauncher.launch(takePictureIntent)
+        } else {
+            Toast.makeText(this, "No camera app found.", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     private fun createImageFile(): File {
         val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
@@ -167,6 +188,7 @@ class CameraScan : AppCompatActivity() {
         )
     }
 
+
     private fun processImage(bitmap: Bitmap) {
         val inputImage = InputImage.fromBitmap(bitmap, 0)
         val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -175,15 +197,18 @@ class CameraScan : AppCompatActivity() {
             .addOnSuccessListener { visionText ->
                 if (visionText.text.isNotEmpty()) {
                     textOutput.text = visionText.text
-                    copyTextButton.visibility = View.VISIBLE // Show the copy button
+                    copyTextButton.visibility = View.VISIBLE
                 } else {
                     labelImage(inputImage)
                 }
+                photoUri = null
             }
             .addOnFailureListener {
                 labelImage(inputImage)
+                photoUri = null
             }
     }
+
 
     private fun labelImage(inputImage: InputImage) {
         val labeler = ImageLabeling.getClient(ImageLabelerOptions.DEFAULT_OPTIONS)
@@ -212,4 +237,68 @@ class CameraScan : AppCompatActivity() {
         clipboard.setPrimaryClip(clip)
         Toast.makeText(this, "Text copied to clipboard", Toast.LENGTH_SHORT).show()
     }
+
+    private fun loadPharmacyData(): List<Map<String, String>> {
+        val assetManager = assets
+        val inputStream = assetManager.open("pharmacy_data.csv")
+        val reader = BufferedReader(InputStreamReader(inputStream))
+
+        val headers = reader.readLine().split(",") // Assumes the first row contains column names
+        val data = mutableListOf<Map<String, String>>()
+
+        reader.forEachLine { line ->
+            val values = line.split(",")
+            val row = headers.zip(values).toMap()
+            data.add(row)
+        }
+
+        reader.close()
+        return data
+    }
+
+    private fun searchInMap(view: View) {
+        val recognizedText = textOutput.text.toString().lowercase().trim()
+        if (recognizedText.isNotEmpty()) {
+            val pharmacyData = loadPharmacyData()
+            val matchingPharmacies = pharmacyData.filter { row ->
+                val medications = row["MedicationName"]?.lowercase()?.split("/") ?: emptyList()
+                medications.any { it.contains(recognizedText) || recognizedText.contains(it) }
+            }.filter { row ->
+                !row["PharmacyName"].isNullOrEmpty() &&
+                        !row["Address"].isNullOrEmpty()
+            }
+
+            if (matchingPharmacies.isNotEmpty()) {
+                val resultMessage = matchingPharmacies.joinToString("\n\n") { row ->
+                    """
+                Pharmacy: ${row["PharmacyName"]?.cleanValue()}
+                Address: ${row["Address"]?.cleanValue()}
+                Website: ${row["Website"]?.cleanValue() ?: "Not Available"}
+                Operating Hours: ${row["OperatingHours"]?.cleanValue() ?: "Not Available"}
+                Phone: ${row["Phone"]?.cleanValue() ?: "Not Available"}
+                Rating: ${row["Rating"]?.cleanValue() ?: "Not Rated"}
+                """.trimIndent()
+                }
+                showResultDialog(resultMessage)
+                Log.d("SearchInMap", "Matching Pharmacies: $matchingPharmacies")
+            } else {
+                Toast.makeText(this, "No matching pharmacies found.", Toast.LENGTH_SHORT).show()
+            }
+        } else {
+            Toast.makeText(this, "No text available for search.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun String.cleanValue(): String {
+        return this.replace("\"", "").trim()
+    }
+
+    private fun showResultDialog(resultMessage: String) {
+        AlertDialog.Builder(this)
+            .setTitle("Pharmacy Results")
+            .setMessage(resultMessage)
+            .setPositiveButton("OK", null)
+            .show()
+    }
+
 }

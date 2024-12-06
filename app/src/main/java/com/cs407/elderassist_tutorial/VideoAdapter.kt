@@ -41,11 +41,9 @@ class VideoAdapter(
         holder.itemView.setOnClickListener {
             onVideoClick(videoItem.videoId)
         }
-        Log.d("VideoAdapter", "Binding video: ${videoItem.title}")
     }
 
     override fun getItemCount(): Int {
-        Log.d("VideoAdapter", "Item count: ${videoList.size}")
         return videoList.size
     }
 
