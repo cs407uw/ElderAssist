@@ -1,0 +1,10 @@
+<resources>
+    <string name="text">Text</string>
+    <string name="preview">Preview</string>
+    <string name="camera">Camera</string>
+    <string name="recognizing_text_error">Recognizing Text error.</string>
+    <string name="detecting_face_error">Detecting Face error.</string>
+    <string name="labeling_image_error">Labeling Image error.</string>
+    <string name="camera_button_description">这是啥</string>
+    <string name="app_name">Lab9</string>
+</resources>
