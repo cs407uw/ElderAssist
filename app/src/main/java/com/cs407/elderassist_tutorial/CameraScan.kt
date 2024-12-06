@@ -77,12 +77,32 @@ class CameraScan : AppCompatActivity() {
         imageHolder = findViewById(R.id.imageHolder)
         textOutput = findViewById(R.id.textOutput)
         copyTextButton = findViewById(R.id.copyTextButton)
+        val backButton: Button = findViewById(R.id.backButton)
 
         copyTextButton.setOnClickListener { copyTextToClipboard() }
-        copyTextButton.visibility = View.GONE // Initially hide the copy button
+        copyTextButton.visibility = View.GONE
+
+        backButton.setOnClickListener {
+            finish()
+        }
 
         checkAndRequestPermissions()
+        showImageSourceDialog()
     }
+
+    private fun showImageSourceDialog() {
+        val items = arrayOf<CharSequence>("Take Photos", "Add from Camera Roll")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Add Photos")
+        builder.setItems(items) { _, item ->
+            when (item) {
+                0 -> dispatchTakePictureIntent() // 拍照
+                1 -> imagePickLauncher.launch("image/*") // 从图库选择
+            }
+        }
+        builder.show()
+    }
+
 
     private fun checkAndRequestPermissions() {
         val requiredPermissions = arrayOf(
@@ -113,7 +133,6 @@ class CameraScan : AppCompatActivity() {
             }
         }
     }
-
 
     fun launchCamera(view: View) {
         val items = arrayOf<CharSequence>("Take Photos", "Add from Camera Roll")
@@ -171,8 +190,8 @@ class CameraScan : AppCompatActivity() {
         labeler.process(inputImage)
             .addOnSuccessListener { labels ->
                 if (labels.isNotEmpty()) {
-                    val labelsText = labels.joinToString("\n") { label ->
-                        "${label.text}: ${String.format("%.2f", label.confidence * 100)}%"
+                    val labelsText = "I guess it is a: " + labels.joinToString(", ") { label ->
+                        "${label.text} (${String.format("%.2f", label.confidence * 100)}%)"
                     }
                     textOutput.text = labelsText
                     copyTextButton.visibility = View.VISIBLE // Show the copy button

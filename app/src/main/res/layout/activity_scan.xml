@@ -6,6 +6,18 @@
     tools:context=".CameraScan">
 
     <!-- 相机预览 -->
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="28dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="Back"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/imageHolder"
         android:layout_width="0dp"
@@ -15,7 +27,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHeight_percent="0.5" /> <!-- 占据屏幕高度的50% -->
+        app:layout_constraintHeight_percent="0.5" />
 
     <!-- 图片信息显示区域 -->
     <TextView
@@ -32,14 +44,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/cameraButton"
         app:layout_constraintTop_toBottomOf="@id/imageHolder"
-        app:layout_constraintHeight_percent="0.2" /> <!-- 占据屏幕高度的20% -->
+        app:layout_constraintHeight_percent="0.2" />
 
     <!-- 拍照按钮 -->
+
+    <!-- 复制文本按钮 -->
     <Button
         android:id="@+id/cameraButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
+        android:layout_marginBottom="28dp"
         android:contentDescription="@string/camera_button_description"
         android:onClick="launchCamera"
         android:text="@string/camera"
@@ -47,15 +62,15 @@
         app:layout_constraintEnd_toStartOf="@id/copyTextButton"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- 复制文本按钮 -->
     <Button
         android:id="@+id/copyTextButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Copy Text"
         android:layout_marginStart="8dp"
+        android:layout_marginBottom="28dp"
+        android:text="Copy Text"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/cameraButton"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/cameraButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -15,6 +15,11 @@
           <theme>@style/Theme.Lab9App</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_scan.xml">
+        <config>
+          <theme>@style/Theme.elderassist_tutorial</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/xml/file_paths.xml">
         <config>
           <theme>@style/Theme.elderassist_tutorial</theme>
@@ -28,9 +33,10 @@
   <component name="ChangeListManager">
     <list default="true" id="6061fa84-278b-4f9b-9946-83454819f17e" name="Changes" comment="scan added1">
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/CameraScan.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/CameraScan.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_scan.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_scan.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

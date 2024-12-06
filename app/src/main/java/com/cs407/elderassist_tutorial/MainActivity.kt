@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d("MainActivity", "Video list size: ${videoList.size}")
+        //Log.d("MainActivity", "Video list size: ${videoList.size}")
 
         // Initialize RecyclerView and Search Functionality
         val searchBar = findViewById<EditText>(R.id.searchBar)
