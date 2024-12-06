@@ -26,7 +26,7 @@ data class SavedLocation(
 interface SavedLocationDao {
 
     @Insert
-    suspend fun insert(location: SavedLocation)
+    suspend fun insertD(location: SavedLocation)
 
     @Query("SELECT * FROM saved_location")
     suspend fun getAllLocations(): List<SavedLocation>
@@ -140,13 +140,14 @@ interface PharmacyMedicationDao {
     @Query("SELECT * FROM PharmacyMedication")
     suspend fun getAllPharmacyMedications(): List<PharmacyMedication>
 }
-@Database(entities = [User::class, Pharmacy::class, Medication::class, PharmacyMedication::class], version = 1)
+@Database(entities = [User::class, Pharmacy::class, Medication::class, PharmacyMedication::class, SavedLocation::class], version = 2)
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun pharmacyDao(): PharmacyDao
     abstract fun medicationDao(): MedicationDao
     abstract fun pharmacyMedicationDao(): PharmacyMedicationDao
+    abstract fun savedLocationDao(): SavedLocationDao
 
     companion object {
         @Volatile
