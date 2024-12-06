@@ -17,6 +17,7 @@ class HomeActivity : AppCompatActivity() {
         val meButton = findViewById<Button>(R.id.meButton)
         val chatButton = findViewById<Button>(R.id.chatButton) // Chat Button
         val scanButton =findViewById<Button>(R.id.ScanButton)
+        val mapButton = findViewById<Button>(R.id.MapButton)
 
         // Home Button: Stay on HomeActivity
         homeButton.setOnClickListener {
@@ -47,5 +48,12 @@ class HomeActivity : AppCompatActivity() {
             val intent = Intent(this, CameraScan::class.java)
             startActivity(intent)
         }
+
+        // Map Button: Navigate to MapActivity
+        mapButton.setOnClickListener {
+            val intent = Intent(this, MapActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 }

@@ -130,14 +130,6 @@
 <!--            android:contentDescription="@string/map_button_desc"-->
 <!--            android:background="?android:attr/selectableItemBackground"-->
 <!--            android:padding="8dp" />-->
-        <ImageButton
-            android:id="@+id/mapButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/settings_icon"
-            android:contentDescription="@string/map_button_desc"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
 
     </LinearLayout>
 

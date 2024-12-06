@@ -1,6 +1,7 @@
 package com.cs407.elderassist_tutorial
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.widget.Button
@@ -26,9 +27,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
 
+        val backButton = findViewById<Button>(R.id.backButton)
+        backButton.setOnClickListener {
+            // Navigate back to HomeActivity
+            val intent = Intent(this, HomeActivity::class.java)
+            startActivity(intent)
+            finish()
+    }
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
+        // Save Location Button
         val saveButton = findViewById<Button>(R.id.saveLocationButton)
         saveButton.setOnClickListener {
             selectedLocation?.let {
@@ -36,6 +45,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             } ?: Toast.makeText(this, "No location selected", Toast.LENGTH_SHORT).show()
         }
     }
+
+
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
