@@ -34,8 +34,6 @@ class NoteListFragment(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         noteDB = NoteDatabase.getDatabase(requireContext())
-        // userPasswdKV = requireContext().getSharedPreferences(
-        //     getString(R.string.userPasswdKV), Context.MODE_PRIVATE)
         userViewModel = if (injectedUserViewModel != null) {
             injectedUserViewModel
         } else {
@@ -65,6 +63,7 @@ class NoteListFragment(
         // 绑定按钮
         val logoutButton = view.findViewById<Button>(R.id.logoutButton)
         val deleteAccountButton = view.findViewById<Button>(R.id.deleteAccountButton)
+        val editUserInfoButton = view.findViewById<Button>(R.id.editUserInfoButton) // 新增按钮
 
         // 设置按钮点击事件
         logoutButton.setOnClickListener {
@@ -78,6 +77,10 @@ class NoteListFragment(
             deleteAccountAndLogout()
         }
 
+        editUserInfoButton.setOnClickListener {
+            findNavController().navigate(R.id.action_noteListFragment_to_editUserInfoFragment)
+        }
+
         // 设置欢迎文本
         val userState = userViewModel.userState.value
         greetingTextView.text = getString(R.string.greeting_text, userState.name)
@@ -87,11 +90,12 @@ class NoteListFragment(
         if (!randomInfo.isNullOrEmpty()) {
             val userInfo = parseUserInfo(randomInfo) // 解析 JSON 信息
             userInfoTextView.text = """
-                User Info:
-                Age: ${userInfo.age}
-                Location: ${userInfo.location}
-                Preferences: ${userInfo.preferences.joinToString(", ")}
-            """.trimIndent()
+            User Info:
+            Username: ${userInfo.username}
+            Age: ${userInfo.age}
+            Location: ${userInfo.location}
+            Preferences: ${userInfo.preferences.joinToString(", ")}
+        """.trimIndent()
         } else {
             userInfoTextView.text = "No user info available."
         }

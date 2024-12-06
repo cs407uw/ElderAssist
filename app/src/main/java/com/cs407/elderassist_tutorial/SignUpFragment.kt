@@ -82,7 +82,7 @@ class SignUpFragment : Fragment() {
                         }
                         user?.let {
                             userViewModel.setUser(UserState(it.userId, it.userName, it.passwd, it.randomInfo))
-                            findNavController().navigate(R.id.action_signUpFragment_to_loginFragment)
+                            findNavController().navigate(R.id.action_signUpFragment_to_editUserInfoFragment)
                         }
                     } else {
                         errorTextView.text = "User already exists or sign-up failed."
@@ -99,7 +99,7 @@ class SignUpFragment : Fragment() {
         password: String
     ): Boolean {
         val hashedPassword = hash(password)
-        val randominfo= generateUserInfo(username)
+        //val randominfo= generateUserInfo(username)
 
         // 获取数据库实例
         val database = NoteDatabase.getDatabase(requireContext())
@@ -109,7 +109,7 @@ class SignUpFragment : Fragment() {
         val existingUser = userDao.getUserByName(username)
         return if (existingUser == null) {
             // 创建新用户
-            val newUser = User(userName = username, passwd = hashedPassword, randomInfo = randominfo)
+            val newUser = User(userName = username, passwd = hashedPassword, randomInfo = "")
             userDao.insertUser(newUser) // 插入新用户
             true
         } else {
