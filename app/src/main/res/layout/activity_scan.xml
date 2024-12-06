@@ -11,10 +11,28 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:contentDescription="@string/preview"
-        app:layout_constraintBottom_toTopOf="@id/cameraButton"
+        app:layout_constraintBottom_toTopOf="@id/textOutput"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHeight_percent="0.5" /> <!-- 占据屏幕高度的50% -->
+
+    <!-- 图片信息显示区域 -->
+    <TextView
+        android:id="@+id/textOutput"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="#FFFFFF"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/cameraButton"
+        app:layout_constraintTop_toBottomOf="@id/imageHolder"
+        app:layout_constraintHeight_percent="0.2" /> <!-- 占据屏幕高度的20% -->
 
     <!-- 拍照按钮 -->
     <Button
@@ -39,21 +57,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/cameraButton"
         app:layout_constraintEnd_toEndOf="parent" />
-
-    <!-- 图片信息显示区域 -->
-    <TextView
-        android:id="@+id/textOutput"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:background="#FFFFFF"
-        android:textColor="#000000"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/cameraButton"
-        app:layout_constraintTop_toBottomOf="@id/imageHolder" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

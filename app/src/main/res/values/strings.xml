@@ -1,5 +1,5 @@
 <resources>
-<<<<<<< HEAD
+
     <string name="app_name">ElderAssist</string>
     <string name="app_title">ElderAssist</string>
     <string name="search_hint">Search</string>
@@ -50,7 +50,7 @@
     <string name="link">here</string>
     <string name="map_button_desc">Navigate to Map</string>
 
-=======
+
     <string name="text">Text</string>
     <string name="preview">Preview</string>
     <string name="camera">Camera</string>
@@ -58,6 +58,5 @@
     <string name="detecting_face_error">Detecting Face error.</string>
     <string name="labeling_image_error">Labeling Image error.</string>
     <string name="camera_button_description">这是啥</string>
-    <string name="app_name">Lab9</string>
->>>>>>> cs407-lab09-ml-momo-main/main
+
 </resources>

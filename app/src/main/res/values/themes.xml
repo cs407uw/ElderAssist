@@ -1,14 +1,25 @@
+<!--<resources xmlns:tools="http://schemas.android.com/tools">-->
+<!--    &lt;!&ndash; Base application theme. &ndash;&gt;-->
+<!--<<<<<<< HEAD-->
+<!--    <style name="Base.Theme.elderassist_tutorial" parent="Theme.Material3.DayNight.NoActionBar">-->
+<!--        &lt;!&ndash; Customize your light theme here. &ndash;&gt;-->
+<!--        &lt;!&ndash; <item name="colorPrimary">@color/my_light_primary</item> &ndash;&gt;-->
+<!--    </style>-->
+
+<!--    <style name="Theme.elderassist_tutorial" parent="Base.Theme.elderassist_tutorial" />-->
+<!--=======-->
+<!--    <style name="Base.Theme.Lab9App" parent="Theme.AppCompat.Light.DarkActionBar">-->
+<!--        &lt;!&ndash; Customize your light theme here. &ndash;&gt;-->
+<!--        &lt;!&ndash; <item name="colorPrimary">@color/my_light_primary</item> &ndash;&gt;-->
+
+<!--    </style>-->
+
+<!--    <style name="Theme.Lab9App" parent="Base.Theme.Lab9App" />-->
+<!--&gt;>>>>>> cs407-lab09-ml-momo-main/main-->
+<!--</resources>-->
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-<<<<<<< HEAD
     <style name="Base.Theme.elderassist_tutorial" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
-    </style>
-
-    <style name="Theme.elderassist_tutorial" parent="Base.Theme.elderassist_tutorial" />
-=======
-    <style name="Base.Theme.Lab9App" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="colorPrimary">@color/colorPrimary</item>
@@ -16,6 +27,5 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="Theme.Lab9App" parent="Base.Theme.Lab9App" />
->>>>>>> cs407-lab09-ml-momo-main/main
+    <style name="Theme.elderassist_tutorial" parent="Base.Theme.elderassist_tutorial" />
 </resources>
