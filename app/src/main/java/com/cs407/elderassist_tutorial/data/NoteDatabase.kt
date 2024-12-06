@@ -86,6 +86,12 @@ interface UserDao {
 
     @Query("DELETE FROM user WHERE userId = :userId")
     suspend fun deleteUser(userId: Int)
+
+    @Query("UPDATE user SET randomInfo = :randomInfo WHERE userId = :userId")
+    suspend fun updateRandomInfo(userId: Int, randomInfo: String)
+
+    @Query("SELECT * FROM user WHERE userId = :userId")
+    suspend fun getUserById(userId: Int): User?
 }
 @Dao
 interface PharmacyDao {
