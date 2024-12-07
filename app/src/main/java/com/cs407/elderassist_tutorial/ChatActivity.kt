@@ -10,7 +10,7 @@ import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
-class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
+class ChatActivity : AppCompatActivity() {
 
     private lateinit var chatInput: EditText
     private lateinit var chatSendButton: Button
@@ -25,6 +25,14 @@ class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
 
+        // Initialize UI components
+        initializeUIComponents()
+
+        // Set button click listeners
+        setupClickListeners()
+    }
+
+    private fun initializeUIComponents() {
         chatInput = findViewById(R.id.chatInput)
         chatSendButton = findViewById(R.id.chatSendButton)
         faqButton1 = findViewById(R.id.faqButton1)
@@ -33,26 +41,18 @@ class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
         chatOutputContainer = findViewById(R.id.chatOutputContainer)
         backButton = findViewById(R.id.backButton)
         chatOutputScrollView = findViewById(R.id.chatOutputScrollView)
+    }
 
-        // Handle back button click
-        backButton.setOnClickListener {
-            finish() // Close the ChatActivity and return to the previous page
-        }
+    private fun setupClickListeners() {
+        // Back button to finish the activity
+        backButton.setOnClickListener { finish() }
 
-        // FAQ Button Actions
-        faqButton1.setOnClickListener {
-            sendMessage(getString(R.string.faq_question_1))
-        }
+        // FAQ Buttons
+        faqButton1.setOnClickListener { sendMessage(getString(R.string.faq_question_1)) }
+        faqButton2.setOnClickListener { sendMessage(getString(R.string.faq_question_2)) }
+        faqButton3.setOnClickListener { sendMessage(getString(R.string.faq_question_3)) }
 
-        faqButton2.setOnClickListener {
-            sendMessage(getString(R.string.faq_question_2))
-        }
-
-        faqButton3.setOnClickListener {
-            sendMessage(getString(R.string.faq_question_3))
-        }
-
-        // Send Button Action
+        // Send button for user input
         chatSendButton.setOnClickListener {
             val userInput = chatInput.text.toString().trim()
             if (userInput.isNotBlank()) {
@@ -64,39 +64,37 @@ class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
 
     private fun sendMessage(message: String) {
         // Add user message bubble
-        addChatBubble(true, message)
+        addChatBubble(isUser = true, message)
 
         // Process message through ChatAgent
-        ChatAgent.processMessage(message, this)
+        ChatAgent.processMessage(message, this, object : ChatAgent.ChatAgentCallback {
+            override fun onResponse(response: String) {
+                runOnUiThread {
+                    // Add AI response bubble
+                    addChatBubble(isUser = false, response)
+                }
+            }
+
+            override fun onError(error: String) {
+                runOnUiThread {
+                    // Add error message bubble
+                    addChatBubble(isUser = false, "Error: $error")
+                }
+            }
+        })
     }
 
-    override fun onResponse(response: String) {
-        runOnUiThread {
-            // Add AI response bubble
-            addChatBubble(false, response)
-        }
-    }
-
-    override fun onError(error: String) {
-        runOnUiThread {
-            // Add error message bubble
-            addChatBubble(false, "Error: $error")
-        }
-    }
-
-    // Function to add a chat bubble
     private fun addChatBubble(isUser: Boolean, message: String) {
         val chatBubble = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             setBackgroundResource(if (isUser) R.drawable.chat_bubble_right else R.drawable.chat_bubble_left)
-            val params = LinearLayout.LayoutParams(
+            layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
             ).apply {
                 gravity = if (isUser) Gravity.END else Gravity.START
-                topMargin = 8 // Space between bubbles
+                topMargin = 8 // Add space between bubbles
             }
-            layoutParams = params
             setPadding(16, 12, 16, 12)
         }
 
@@ -109,7 +107,7 @@ class ChatActivity : AppCompatActivity(), ChatAgent.ChatAgentCallback {
         chatBubble.addView(messageText)
         chatOutputContainer.addView(chatBubble)
 
-        // Scroll to the bottom of the chat output
+        // Scroll to the bottom of the chat
         chatOutputScrollView.post {
             chatOutputScrollView.fullScroll(ScrollView.FOCUS_DOWN)
         }

@@ -14,6 +14,29 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+//travel information
+@Entity(tableName = "travel_information")
+data class TravelInformation(
+    @PrimaryKey(autoGenerate = true) val travelId: Int = 0,
+    val destinationName: String,
+    val description: String,
+    val attractions: String,
+    val bestTimeToVisit: String,
+    val transportOptions: String
+)
+
+@Dao
+interface TravelInformationDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertTravelInformation(travelInformation: TravelInformation)
+
+    @Query("SELECT * FROM travel_information WHERE destinationName = :name")
+    suspend fun getTravelInformationByName(name: String): TravelInformation?
+
+    @Query("SELECT * FROM travel_information")
+    suspend fun getAllTravelInformation(): List<TravelInformation>
+}
+
 //map
 @Entity(tableName = "saved_location")
 data class SavedLocation(
@@ -140,7 +163,10 @@ interface PharmacyMedicationDao {
     @Query("SELECT * FROM PharmacyMedication")
     suspend fun getAllPharmacyMedications(): List<PharmacyMedication>
 }
-@Database(entities = [User::class, Pharmacy::class, Medication::class, PharmacyMedication::class, SavedLocation::class], version = 2)
+@Database(
+    entities = [User::class, Pharmacy::class, Medication::class, PharmacyMedication::class, SavedLocation::class, TravelInformation::class],
+    version = 3
+)
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
@@ -148,6 +174,7 @@ abstract class NoteDatabase : RoomDatabase() {
     abstract fun medicationDao(): MedicationDao
     abstract fun pharmacyMedicationDao(): PharmacyMedicationDao
     abstract fun savedLocationDao(): SavedLocationDao
+    abstract fun travelInformationDao(): TravelInformationDao
 
     companion object {
         @Volatile
@@ -159,10 +186,13 @@ abstract class NoteDatabase : RoomDatabase() {
                     context.applicationContext,
                     NoteDatabase::class.java,
                     "app_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration() // Enable migration in case of schema changes
+                    .build()
                 INSTANCE = instance
                 instance
             }
         }
     }
 }
+
