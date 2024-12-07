@@ -168,15 +168,12 @@ class CameraScan : AppCompatActivity() {
             "${packageName}.fileprovider",
             createImageFile()
         )
-
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
 
-        if (takePictureIntent.resolveActivity(packageManager) != null) {
-            imageCaptureLauncher.launch(takePictureIntent)
-        } else {
-            Toast.makeText(this, "No camera app found.", Toast.LENGTH_SHORT).show()
-        }
+        imageCaptureLauncher.launch(takePictureIntent)
     }
+
+
 
 
     private fun createImageFile(): File {
