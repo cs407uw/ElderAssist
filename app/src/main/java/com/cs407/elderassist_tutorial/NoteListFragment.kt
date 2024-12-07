@@ -1,6 +1,7 @@
 package com.cs407.elderassist_tutorial
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -26,7 +27,7 @@ class NoteListFragment(
     private lateinit var greetingTextView: TextView
 
     private lateinit var userViewModel: UserViewModel
-
+    private lateinit var backToHomeButton: Button
     private lateinit var noteDB: NoteDatabase
 
     private lateinit var userInfoTextView: TextView
@@ -70,6 +71,18 @@ class NoteListFragment(
             // Log Out 的逻辑
             userViewModel.setUser(UserState())
             findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
+        }
+
+        // 初始化按钮
+        backToHomeButton = view.findViewById(R.id.backToHomeButton)
+
+        // 设置点击事件
+        backToHomeButton.setOnClickListener {
+            val intent = Intent(requireContext(), HomeActivity::class.java)
+            startActivity(intent)
+
+            // 如果希望关闭当前 LoginActivity 页面，防止返回堆栈中残留：
+            requireActivity().finish()
         }
 
         deleteAccountButton.setOnClickListener {
