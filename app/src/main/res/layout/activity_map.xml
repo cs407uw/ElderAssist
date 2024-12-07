@@ -30,11 +30,11 @@
         android:id="@+id/saveLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="60dp"
+        android:layout_marginBottom="68dp"
         android:text="Save Location"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.915"
+        app:layout_constraintHorizontal_bias="0.838"
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
@@ -47,21 +47,35 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:padding="8dp" />
 
+    <!-- Show Saved Locations Button now appears below the search input (previously the search button's position) -->
+
+    <!-- Search button now appears at the bottom-left (previously the saved locations button's position) -->
+
+    <Button
+        android:id="@+id/showSavedLocationsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"
+        android:text="Show Saved Locations"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/searchInput" />
+
     <Button
         android:id="@+id/searchPharmacyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginStart="168dp"
+        android:layout_marginBottom="124dp"
         android:text="Search"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/searchInput" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/nearbyPharmaciesButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
         android:text="Nearby Pharmacies"
         app:layout_constraintEnd_toEndOf="parent"

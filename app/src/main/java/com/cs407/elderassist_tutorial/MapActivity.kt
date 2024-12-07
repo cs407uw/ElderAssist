@@ -12,12 +12,12 @@ import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.cs407.elderassist_tutorial.data.NoteDatabase
-import com.cs407.elderassist_tutorial.data.Pharmacy
 import com.cs407.elderassist_tutorial.data.SavedLocation
 import com.cs407.elderassist_tutorial.utils.CSVimport
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import com.opencsv.CSVReader
 import kotlinx.coroutines.launch
-import java.io.FileReader
 import java.io.InputStreamReader
 import java.util.*
 
@@ -39,6 +38,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private var selectedLocation: LatLng? = null
     private var userLocation: LatLng? = null
+    private val database by lazy { NoteDatabase.getDatabase(this) }
+    private val savedLocationDao by lazy { database.savedLocationDao() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 val csvReader = CSVReader(InputStreamReader(assets.open("pharmacy_data.csv")))
                 CSVimport.importPharmacyData(csvReader, this@MapActivity)
 
-                // 再次打开 CSV，因为上一次读取已将数据流读完
                 val csvReader2 = CSVReader(InputStreamReader(assets.open("pharmacy_data.csv")))
                 CSVimport.importMedicationData(csvReader2, this@MapActivity)
 
@@ -74,7 +74,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val searchButton = findViewById<Button>(R.id.searchPharmacyButton)
         val searchInput = findViewById<EditText>(R.id.searchInput)
         searchButton.setOnClickListener {
-            val medicineName = searchInput.text.toString()
+            val medicineName = searchInput.text.toString().trim()
             if (medicineName.isNotEmpty()) {
                 searchPharmaciesWithMedicine(medicineName)
             } else {
@@ -95,14 +95,18 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-
-
         // Save Location Button
         val saveButton = findViewById<Button>(R.id.saveLocationButton)
         saveButton.setOnClickListener {
             selectedLocation?.let {
                 saveLocation(it)
             } ?: Toast.makeText(this, "No location selected", Toast.LENGTH_SHORT).show()
+        }
+
+        // Show Saved Locations Button
+        val showSavedLocationsButton = findViewById<Button>(R.id.showSavedLocationsButton)
+        showSavedLocationsButton.setOnClickListener {
+            showSavedLocationsPanel()
         }
     }
 
@@ -121,6 +125,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun fetchUserLocation() {
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
         locationManager.requestLocationUpdates(
             LocationManager.GPS_PROVIDER,
             0L,
@@ -131,15 +145,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation ?: LatLng(0.0, 0.0), 15f))
                     locationManager.removeUpdates(this) // Stop listening after fetching location
                 }
-
                 override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
                 override fun onProviderEnabled(provider: String) {}
                 override fun onProviderDisabled(provider: String) {}
             }
         )
     }
-
-
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
@@ -153,6 +164,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         }
+
         // Map Click Listener
         mMap.setOnMapClickListener { latLng ->
             mMap.clear()
@@ -172,13 +184,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
     private fun showNearbyPharmacies() {
         val database = NoteDatabase.getDatabase(this)
         val pharmacyDao = database.pharmacyDao()
 
         lifecycleScope.launch {
-            // Retrieve all pharmacies from the database
             val pharmacies = pharmacyDao.getAllPharmacies()
 
             if (pharmacies.isEmpty()) {
@@ -188,12 +198,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             mMap.clear() // Clear previous markers
 
-            val count = pharmacyDao.countPharmacies()
-
-            Log.d("DatabaseDebug", "Pharmacy table row count: $count")
-            if (count == 0) {
-                Toast.makeText(this@MapActivity, "Pharmacy table is empty", Toast.LENGTH_SHORT).show()
-            }
+            // You can also check count if needed
+            // val count = pharmacyDao.countPharmacies()
+            // Log.d("DatabaseDebug", "Pharmacy table row count: $count")
 
             pharmacies.forEach { pharmacy ->
                 val latLng = getLatLngFromAddress(pharmacy.address)
@@ -209,14 +216,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
 
-            // Center the map on the first pharmacy or user location if available
             val firstLatLng = pharmacies.firstOrNull()?.let { getLatLngFromAddress(it.address) }
             val centerLatLng = firstLatLng ?: userLocation ?: LatLng(0.0, 0.0)
 
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, 12f))
         }
     }
-
 
     private fun searchPharmaciesWithMedicine(medicineName: String) {
         val database = NoteDatabase.getDatabase(this)
@@ -250,6 +255,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             if (closestPharmacy != null) {
                 val closestLatLng = getLatLngFromAddress(closestPharmacy.address)
+                mMap.clear()
                 mMap.addMarker(
                     MarkerOptions()
                         .position(closestLatLng)
@@ -263,8 +269,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
-
     private fun getLatLngFromAddress(address: String): LatLng {
         return try {
             val geocoder = Geocoder(this, Locale.getDefault())
@@ -272,17 +276,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             if (location != null) {
                 LatLng(location.latitude, location.longitude)
             } else {
-                LatLng(0.0, 0.0) // Default location if the address can't be resolved
+                LatLng(0.0, 0.0)
             }
         } catch (e: Exception) {
-            LatLng(0.0, 0.0) // Default location in case of an error
+            LatLng(0.0, 0.0)
         }
     }
 
     private fun saveLocation(location: LatLng) {
-        val database = NoteDatabase.getDatabase(this)
-        val savedLocationDao = database.savedLocationDao()
-
         lifecycleScope.launch {
             savedLocationDao.insertD(
                 SavedLocation(
@@ -291,6 +292,34 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
             )
             Toast.makeText(this@MapActivity, "Location saved!", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showSavedLocationsPanel() {
+        lifecycleScope.launch {
+            val savedLocations = savedLocationDao.getAllLocations()
+            if (savedLocations.isEmpty()) {
+                Toast.makeText(this@MapActivity, "No saved locations", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            // Convert lat/lng to addresses if possible
+            val geocoder = Geocoder(this@MapActivity, Locale.getDefault())
+            val locationListStrings = savedLocations.map { loc ->
+                val addresses = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
+                val addressStr = if (!addresses.isNullOrEmpty()) {
+                    addresses[0].getAddressLine(0)
+                } else {
+                    "Lat: ${loc.latitude}, Lng: ${loc.longitude}"
+                }
+                "ID: ${loc.id} - $addressStr"
+            }
+
+            AlertDialog.Builder(this@MapActivity)
+                .setTitle("Saved Locations")
+                .setItems(locationListStrings.toTypedArray(), null)
+                .setPositiveButton("OK", null)
+                .show()
         }
     }
 
