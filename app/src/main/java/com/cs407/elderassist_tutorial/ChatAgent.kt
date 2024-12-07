@@ -14,23 +14,21 @@ object ChatAgent {
 
     private val client = OkHttpClient()
     private var followUpIntent: String? = null
-    private lateinit var medicationData: List<Map<String, String>>
+    private lateinit var medicineInformation: Map<String, String> // Map of Medicine Name to Description
     private lateinit var travelData: List<Map<String, String>>
 
-    // Callback to handle chat responses
     interface ChatAgentCallback {
         fun onResponse(response: String)
         fun onError(error: String)
     }
 
-    // Function to process user input
     fun processMessage(userInput: String, context: Context, callback: ChatAgentCallback) {
-        // Load data from CSV if not already loaded
-        if (!::medicationData.isInitialized) {
-            medicationData = try {
-                loadCSVData(context, "pharmacy_data.csv")
+        // Load medicine data from the new CSV file if not already loaded
+        if (!::medicineInformation.isInitialized) {
+            medicineInformation = try {
+                loadMedicineInformation(context, "medicine_information.csv")
             } catch (e: IOException) {
-                callback.onError("Failed to load pharmacy data: ${e.message}")
+                callback.onError("Failed to load medication information: ${e.message}")
                 return
             }
         }
@@ -61,7 +59,6 @@ object ChatAgent {
                 if (response.isSuccessful) {
                     response.body?.string()?.let { responseBody ->
                         val intent = parseIntent(responseBody)
-                        // Handle follow-up or new intent
                         handleIntent(intent, userInput, callback)
                     } ?: callback.onError("Empty response from ChatAgent.")
                 } else {
@@ -71,31 +68,29 @@ object ChatAgent {
         })
     }
 
-    // Parse the Wit.AI response and extract the intent
     private fun parseIntent(response: String): String? {
         val jsonResponse = JSONObject(response)
         val intents = jsonResponse.optJSONArray("intents")
-        return if (intents != null && intents.length() > 0) {
-            intents.getJSONObject(0).getString("name")
-        } else {
-            null
-        }
+        return intents?.optJSONObject(0)?.getString("name")
     }
 
-    // Handle the extracted intent
     private fun handleIntent(intent: String?, userInput: String, callback: ChatAgentCallback) {
         when (intent) {
             "Medication_Scan" -> {
-                followUpIntent = "Medication_Scan" // Set follow-up intent
-                val availableMedications = medicationData.map { it["Medicine Name"] ?: "Unknown" }
-                callback.onResponse("Which medication information would you like to know? Available medications:\n${availableMedications.joinToString(", ")}")
+                followUpIntent = "Medication_Scan"
+                val availableMedications = medicineInformation.keys
+                if (availableMedications.isNotEmpty()) {
+                    callback.onResponse("Which medication information would you like to know? Available medications:\n${availableMedications.joinToString(", ")}")
+                } else {
+                    callback.onResponse("No medications are available in the database.")
+                }
             }
             "Customer_Support" -> {
-                followUpIntent = null // No follow-up needed
+                followUpIntent = null
                 callback.onResponse("You can reach customer support via phone at 1-800-555-5555 or email at support@elderassist.com.")
             }
             "Travel_Information" -> {
-                followUpIntent = "Travel_Information" // Set follow-up intent
+                followUpIntent = "Travel_Information"
                 val availableDestinations = travelData.map { it["Destination"] ?: "Unknown" }
                 callback.onResponse("Which destination would you like to know about? Available destinations:\n${availableDestinations.joinToString(", ")}")
             }
@@ -103,15 +98,14 @@ object ChatAgent {
         }
     }
 
-    // Handle follow-up based on previous intent
     private fun handleFollowUp(intent: String, userInput: String, callback: ChatAgentCallback) {
         when (intent) {
             "Medication_Scan" -> {
-                val medicationInfo = getMedicationInfo(userInput)
-                if (medicationInfo != null) {
-                    callback.onResponse("Information about ${medicationInfo["Medicine Name"]}: ${medicationInfo["Medication Description"]}.")
+                val medicationDescription = medicineInformation[userInput]
+                if (medicationDescription != null) {
+                    callback.onResponse("Information about $userInput: $medicationDescription.")
                 } else {
-                    callback.onResponse("Sorry, we don't have information about this medication yet. We will update it in the future.")
+                    callback.onResponse("Sorry, we don't have information about this medication.")
                 }
             }
             "Travel_Information" -> {
@@ -125,38 +119,59 @@ object ChatAgent {
                                 "Transport Options: ${destinationInfo["Transport Options"]}"
                     )
                 } else {
-                    callback.onResponse("Sorry, we don't have information about this destination yet. We will update it in the future.")
+                    callback.onResponse("Sorry, we don't have information about this destination yet.")
                 }
             }
         }
-        followUpIntent = null // Reset follow-up intent after handling
+        followUpIntent = null
     }
 
-    // Load data from a CSV file
-    private fun loadCSVData(context: Context, fileName: String): List<Map<String, String>> {
+    // Load medicine information from the new CSV file
+    private fun loadMedicineInformation(context: Context, fileName: String): Map<String, String> {
         val assetManager = context.assets
         val inputStream = assetManager.open(fileName)
         val reader = BufferedReader(InputStreamReader(inputStream))
 
         val headers = reader.readLine().split(",") // Assumes the first row contains column names
+        val nameIndex = headers.indexOf("Medicine Name")
+        val descriptionIndex = headers.indexOf("Medication Description")
+
+        val medicineMap = mutableMapOf<String, String>()
+
+        reader.forEachLine { line ->
+            val values = line.split(",").map { it.trim() }
+            if (values.size > maxOf(nameIndex, descriptionIndex)) {
+                val name = values[nameIndex]
+                val description = values[descriptionIndex]
+                if (name.isNotBlank() && description.isNotBlank()) {
+                    medicineMap[name] = description // Map medicine name to description
+                }
+            }
+        }
+
+        reader.close()
+        return medicineMap
+    }
+
+    private fun loadCSVData(context: Context, fileName: String): List<Map<String, String>> {
+        val assetManager = context.assets
+        val inputStream = assetManager.open(fileName)
+        val reader = BufferedReader(InputStreamReader(inputStream))
+
+        val headers = reader.readLine().split(",")
         val data = mutableListOf<Map<String, String>>()
 
         reader.forEachLine { line ->
-            val values = line.split(",")
-            val row = headers.zip(values).toMap()
-            data.add(row)
+            val values = line.split(",").map { it.trim() }
+            if (values.size == headers.size) {
+                val row = headers.zip(values).toMap()
+                data.add(row)
+            }
         }
-
         reader.close()
         return data
     }
 
-    // Fetch specific medication information
-    private fun getMedicationInfo(medicationName: String): Map<String, String>? {
-        return medicationData.find { it["Medicine Name"]?.equals(medicationName, ignoreCase = true) == true }
-    }
-
-    // Fetch specific travel information
     private fun getTravelInfo(destinationName: String): Map<String, String>? {
         return travelData.find { it["Destination"]?.equals(destinationName, ignoreCase = true) == true }
     }

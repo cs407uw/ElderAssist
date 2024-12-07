@@ -9,17 +9,3 @@ PharmacyID,PharmacyName,Address,Website,OperatingHours,Phone,Rating,InsuranceLin
 8,Walgreens Pharmacy,"676 State St, Madison, WI 53703",https://www.walgreens.com,7:00 AM - 10:00 PM daily,608-257-2556,3.5/5,https://www.walgreens.com/findcare/content/find-prescription-coverage,"Tylenol, Zyrtec, Advil, Mucinex DM",MiraLAX,Treats occasional constipation.
 9,Walgreens Pharmacy,"7810 Mineral Point Rd, Madison, WI 53717",https://www.walgreens.com,24 hours,608-833-1222,3.9/5,https://www.walgreens.com/findcare/content/find-prescription-coverage,"Tylenol, Advil, Boiron, Vicks, Mucinex DM, DayQuil/NyQuil",Tylenol,Alleviates mild to moderate pain.
 10,Evjue Clinic Pharmacy (UW Health),"3434 E Washington Ave, Madison, WI",https://www.uwhealth.org,Please visit the website or call for specific hours,608-204-2680,N/A,https://www.uwhealth.org/billing-insurance#5dbFwdk3ZNTyJQfyfrgtxx,"Neosporin, Tylenol, Advil, Mucinex DM, DayQuil/NyQuil",NasalFresh,Cleanses nasal passages with irrigation.
-,,,,,,,,,Neosporin,Prevents infection in minor cuts.
-,,,,,,,,,Iberogast,Relieves digestive symptoms and IBS.
-,,,,,,,,,Zyrtec,Manages allergic reactions and symptoms.
-,,,,,,,,,Advil,Reduces inflammation and relieves pain.
-,,,,,,,,,XYZAL,Provides 24-hour relief from allergies.
-,,,,,,,,,Biofreeze,Offers temporary relief from muscle pain.
-,,,,,,,,,Genexa,Organic treatment for cold symptoms.
-,,,,,,,,,Ricola,Soothes throat and relieves coughs.
-,,,,,,,,,Imodium,Controls symptoms of diarrhea.
-,,,,,,,,,Abreva,Treats and heals cold sores.
-,,,,,,,,,Halls,Soothes sore throats and coughs.
-,,,,,,,,,Vicks,Relieves cough and congestion.
-,,,,,,,,,Prevacid,Reduces stomach acid and treats GERD.
-,,,,,,,,,Wonderbelly,Antacid that neutralizes stomach acid.
