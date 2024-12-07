@@ -2,10 +2,19 @@ package com.cs407.elderassist_tutorial
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import com.cs407.elderassist_tutorial.utils.CSVimport
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
+import java.io.InputStreamReader
+import com.opencsv.CSVReader
+import com.cs407.elderassist_tutorial.utils.SearchUtils
 
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,6 +77,67 @@ class HomeActivity : AppCompatActivity() {
                     "Invalid search query. Try 'tutorial', 'map', 'scan', 'chat', or 'me'.",
                     Toast.LENGTH_SHORT
                 ).show()
+            }
+        }
+
+        // database
+        //val csvFilePath = "path/to/your/csv/file.csv"
+        lifecycleScope.launch {
+            try {
+                // 创建 Pharmacy 的 CSVReader
+                val inputStreamPharmacy = assets.open("pharmacy_data.csv")
+                val csvReaderPharmacy = CSVReader(InputStreamReader(inputStreamPharmacy))
+                CSVimport.importPharmacyData(csvReaderPharmacy, applicationContext)
+
+                // 创建 Medication 的 CSVReader
+                val inputStreamMedication = assets.open("pharmacy_data.csv")
+                val csvReaderMedication = CSVReader(InputStreamReader(inputStreamMedication))
+                CSVimport.importMedicationData(csvReaderMedication, applicationContext)
+
+                // 创建 PharmacyMedication 的 CSVReader
+                val inputStreamPharmacyMedication = assets.open("pharmacy_data.csv")
+                val csvReaderPharmacyMedication = CSVReader(InputStreamReader(inputStreamPharmacyMedication))
+                CSVimport.linkPharmacyAndMedications(csvReaderPharmacyMedication, applicationContext)
+
+                Log.d("CSVImporter", "CSV success")
+                // 查询并打印数据库内容
+                logDatabaseInfo()
+
+//                // 测试 searchPharmaciesByMedication
+//                val medicineName = "Tylenol" // 替换为你的 CSV 数据中的药品名称
+//                val pharmacies = withContext(Dispatchers.IO) {
+//                    SearchUtils.searchPharmaciesByMedication(applicationContext, medicineName)
+//                }
+//                Log.d("LoginMainActivity", "Pharmacies for $medicineName: $pharmacies")
+//
+//                // 测试 searchMedicationsByPharmacy
+//                val pharmacyName = "CVS Pharmacy" // 替换为你的 CSV 数据中的药店名称
+//                val medications = withContext(Dispatchers.IO) {
+//                    SearchUtils.searchMedicationsByPharmacy(applicationContext, pharmacyName)
+//                }
+//                Log.d("LoginMainActivity", "Medications for $pharmacyName: $medications")
+
+            } catch (e: Exception) {
+                Log.e("CSVImporter", "CSV error: ${e.message}")
+            }
+        }
+    }
+
+    // 查询并打印数据库内容
+    private suspend fun logDatabaseInfo() {
+        withContext(Dispatchers.IO) {
+            val database = com.cs407.elderassist_tutorial.data.NoteDatabase.getDatabase(applicationContext)
+
+            // 打印所有药房信息
+            val pharmacies = database.pharmacyDao().getAllPharmacies()
+            pharmacies.forEach { pharmacy ->
+                Log.d("Database-Pharmacy", "Pharmacy: ${pharmacy.pharmacyName}, Address: ${pharmacy.address}")
+            }
+
+            // 打印所有药品信息
+            val medications = database.medicationDao().getAllMedications()
+            medications.forEach { medication ->
+                Log.d("Database-Medication", "Medication: ${medication.medicineName}, Description: ${medication.medicationDescription}")
             }
         }
     }
