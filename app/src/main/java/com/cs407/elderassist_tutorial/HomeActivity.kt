@@ -90,7 +90,9 @@ class HomeActivity : AppCompatActivity() {
                 CSVimport.importPharmacyData(csvReaderPharmacy, applicationContext)
 
                 // 创建 Medication 的 CSVReader
-                val inputStreamMedication = assets.open("pharmacy_data.csv")
+
+                val inputStreamMedication = assets.open("medicine_information.csv")
+
                 val csvReaderMedication = CSVReader(InputStreamReader(inputStreamMedication))
                 CSVimport.importMedicationData(csvReaderMedication, applicationContext)
 

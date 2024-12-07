@@ -47,8 +47,9 @@ object CSVimport {
         val medicationDao = database.medicationDao()
 
         csvReader.readAll().drop(1).forEach { row ->
-            val medicineName = row[9]
-            val description = row[10]
+
+            val medicineName = row[0]
+            val description = row[1]
 
             val medication = Medication(
                 medicineName = medicineName,
