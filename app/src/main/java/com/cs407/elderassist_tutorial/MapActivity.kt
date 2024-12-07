@@ -49,6 +49,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             try {
                 val csvReader = CSVReader(InputStreamReader(assets.open("pharmacy_data.csv")))
                 CSVimport.importPharmacyData(csvReader, this@MapActivity)
+
+                // 再次打开 CSV，因为上一次读取已将数据流读完
+                val csvReader2 = CSVReader(InputStreamReader(assets.open("pharmacy_data.csv")))
+                CSVimport.importMedicationData(csvReader2, this@MapActivity)
+
+                val csvReader3 = CSVReader(InputStreamReader(assets.open("pharmacy_data.csv")))
+                CSVimport.linkPharmacyAndMedications(csvReader3, this@MapActivity)
+
                 Log.d("CSVImport", "Pharmacy data imported successfully")
             } catch (e: Exception) {
                 Log.e("CSVImport", "Error importing pharmacy data: ${e.message}")
@@ -145,6 +153,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         }
+        // Map Click Listener
+        mMap.setOnMapClickListener { latLng ->
+            mMap.clear()
+            mMap.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
+            selectedLocation = latLng
+        }
+
     }
 
     private fun checkAndRequestPermissions() {
