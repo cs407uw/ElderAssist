@@ -2,13 +2,11 @@ package com.cs407.elderassist_tutorial
 
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextWatcher
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -29,8 +27,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        //Log.d("MainActivity", "Video list size: ${videoList.size}")
 
         // Initialize RecyclerView and Search Functionality
         val searchBar = findViewById<EditText>(R.id.searchBar)
@@ -60,8 +56,11 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        // Initialize Footer Navigation Buttons
-        initializeFooterNavigation()
+        // Back button functionality
+        val backButton = findViewById<Button>(R.id.backButton)
+        backButton.setOnClickListener {
+            finish()
+        }
     }
 
     private fun filterVideos(query: String) {
@@ -72,43 +71,5 @@ class MainActivity : AppCompatActivity() {
             filteredList.addAll(videoList.filter { it.title.contains(query, ignoreCase = true) })
         }
         adapter.notifyDataSetChanged()
-    }
-
-    private fun initializeFooterNavigation() {
-        val homeButton = findViewById<ImageButton>(R.id.homeButton)
-        val videosButton = findViewById<ImageButton>(R.id.videosButton)
-        val blogsButton = findViewById<ImageButton>(R.id.blogsButton)
-        val profileButton = findViewById<ImageButton>(R.id.profileButton)
-        val settingsButton = findViewById<ImageButton>(R.id.settingsButton)
-
-        // Navigate to HomeActivity
-        homeButton.setOnClickListener {
-            val intent = Intent(this, HomeActivity::class.java)
-            startActivity(intent)
-        }
-
-        // Stay on MainActivity (Videos Section)
-        videosButton.setOnClickListener {
-            // Optional: Reload videos or perform specific action
-        }
-
-        // Placeholder for Blogs Section
-        blogsButton.setOnClickListener {
-            // Intent for BlogsActivity (Create if needed)
-            Log.d("MainActivity", "Blogs Button Clicked")
-        }
-
-        // Placeholder for Profile Section
-        profileButton.setOnClickListener {
-            // Intent for ProfileActivity (Create if needed)
-            Log.d("MainActivity", "Profile Button Clicked")
-        }
-
-
-        // Placeholder for Settings Section
-        settingsButton.setOnClickListener {
-            // Intent for SettingsActivity (Create if needed)
-            Log.d("MainActivity", "Settings Button Clicked")
-        }
     }
 }

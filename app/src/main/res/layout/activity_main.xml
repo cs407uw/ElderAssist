@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
+    <!-- Back Button -->
     <Button
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
-        android:text="Back"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Back" />
 
-    <!-- Title Text (ElderAssist) Centered -->
-<!--    <TextView-->
-<!--        android:id="@+id/titleText"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:gravity="center"-->
-<!--        android:padding="8dp"-->
-<!--        android:text="@string/app_name"-->
-<!--        android:textSize="34sp"-->
-<!--        android:textStyle="bold" />-->
+    <!-- Tutorial Videos Title -->
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tutorial Videos"
+        android:gravity="center"
+        android:textSize="32sp"
+        android:padding="16dp"
+        android:textStyle="bold" />
 
     <!-- Search Bar Section -->
     <LinearLayout
@@ -54,17 +53,6 @@
             android:layout_marginStart="8dp" />
     </LinearLayout>
 
-    <!-- Section Title -->
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/tutorials_title"
-        android:gravity="center"
-        android:textSize="24sp"
-        android:padding="16dp"
-        android:textStyle="bold" />
-
     <!-- RecyclerView for Video List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -72,75 +60,5 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:scrollbars="vertical" />
-
-    <!-- Footer Navigation Bar -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:padding="8dp"
-        android:background="?android:attr/windowBackground">
-
-        <!-- Home Button -->
-        <ImageButton
-            android:id="@+id/homeButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/home_icon"
-            android:contentDescription="@string/home_button_desc"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
-
-        <!-- Videos Button -->
-        <ImageButton
-            android:id="@+id/videosButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/videos_icon"
-            android:contentDescription="@string/videos_button_desc"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
-
-        <!-- Blogs Button -->
-        <ImageButton
-            android:id="@+id/blogsButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/blogs_icon"
-            android:contentDescription="@string/blogs_button_desc"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
-
-        <!-- Profile Button -->
-        <ImageButton
-            android:id="@+id/profileButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/profile_icon"
-            android:contentDescription="@string/profile_button_desc"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
-
-        <!-- Settings Button -->
-        <ImageButton
-            android:id="@+id/settingsButton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/settings_icon"
-            android:contentDescription="@string/settings_button_desc"
-            android:background="?android:attr/selectableItemBackground"
-            android:padding="8dp" />
-
-<!--        <ImageButton-->
-<!--            android:id="@+id/mapButton"-->
-<!--            android:layout_width="48dp"-->
-<!--            android:layout_height="48dp"-->
-<!--            android:src="@drawable/map_icon"-->
-<!--            android:contentDescription="@string/map_button_desc"-->
-<!--            android:background="?android:attr/selectableItemBackground"-->
-<!--            android:padding="8dp" />-->
-
-    </LinearLayout>
 
 </LinearLayout>

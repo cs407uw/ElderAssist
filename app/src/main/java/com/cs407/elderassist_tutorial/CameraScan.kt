@@ -39,6 +39,7 @@ class CameraScan : AppCompatActivity() {
     private lateinit var imageHolder: ImageView
     private lateinit var textOutput: TextView
     private lateinit var copyTextButton: Button
+    private lateinit var searchInMapButton: Button
 
     private var photoUri: Uri? = null
 
@@ -82,9 +83,11 @@ class CameraScan : AppCompatActivity() {
         textOutput = findViewById(R.id.textOutput)
         copyTextButton = findViewById(R.id.copyTextButton)
         val backButton: Button = findViewById(R.id.backButton)
+        searchInMapButton = findViewById(R.id.searchInMapButton)
 
         copyTextButton.setOnClickListener { copyTextToClipboard() }
         copyTextButton.visibility = View.GONE
+        searchInMapButton.isEnabled = false
 
         backButton.setOnClickListener {
             finish()
@@ -126,20 +129,19 @@ class CameraScan : AppCompatActivity() {
         }
     }
 
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == 100) {
-            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
-                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Permissions denied", Toast.LENGTH_SHORT).show()
-            }
-        }
+//        if (requestCode == 100) {
+//            if (grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+//                Toast.makeText(this, "Permissions granted", Toast.LENGTH_SHORT).show()
+//            } else {
+//                Toast.makeText(this, "Permissions denied", Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 
     fun launchCamera(view: View) {
@@ -169,12 +171,8 @@ class CameraScan : AppCompatActivity() {
             createImageFile()
         )
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri)
-
         imageCaptureLauncher.launch(takePictureIntent)
     }
-
-
-
 
     private fun createImageFile(): File {
         val storageDir: File = getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
@@ -185,7 +183,6 @@ class CameraScan : AppCompatActivity() {
         )
     }
 
-
     private fun processImage(bitmap: Bitmap) {
         val inputImage = InputImage.fromBitmap(bitmap, 0)
         val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
@@ -195,6 +192,7 @@ class CameraScan : AppCompatActivity() {
                 if (visionText.text.isNotEmpty()) {
                     textOutput.text = visionText.text
                     copyTextButton.visibility = View.VISIBLE
+                    searchInMapButton.isEnabled = true
                 } else {
                     labelImage(inputImage)
                 }
@@ -216,15 +214,17 @@ class CameraScan : AppCompatActivity() {
                         "${label.text} (${String.format("%.2f", label.confidence * 100)}%)"
                     }
                     textOutput.text = labelsText
-                    copyTextButton.visibility = View.VISIBLE // Show the copy button
+                    copyTextButton.visibility = View.VISIBLE
+                    searchInMapButton.isEnabled = false
                 } else {
                     textOutput.text = "No objects detected."
-                    copyTextButton.visibility = View.GONE // Hide the copy button
+                    copyTextButton.visibility = View.GONE
                 }
             }
             .addOnFailureListener {
                 textOutput.text = "Error labeling image."
-                copyTextButton.visibility = View.GONE // Hide the copy button
+                copyTextButton.visibility = View.GONE
+                searchInMapButton.isEnabled = false
             }
     }
 
