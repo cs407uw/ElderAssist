@@ -1,178 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    android:orientation="vertical"
     tools:context=".HomeActivity">
 
-    <!-- App Header -->
-    <TextView
-        android:id="@+id/appTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="16dp"
-        android:text="@string/app_title"
-        android:textColor="#000000"
-        android:textSize="24sp"
-        android:textStyle="bold" />
-
-    <!-- Search Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="8dp">
+        android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/searchInput"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:hint="@string/search_hint"
-            android:padding="10dp" />
-
-        <Button
-            android:id="@+id/cancelButton"
-            android:layout_width="wrap_content"
+        <!-- App Header -->
+        <TextView
+            android:id="@+id/appTitle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/cancel" />
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/app_title"
+            android:textColor="#000000"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <!-- Introduction Section -->
+        <TextView
+            android:id="@+id/introductionText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@string/introduction_text"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="italic" />
+
+        <!-- Search Bar Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <EditText
+                android:id="@+id/searchBar"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:hint="@string/search_hint"
+                android:background="@android:drawable/edit_text"
+                android:padding="10dp" />
+
+            <Button
+                android:id="@+id/searchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:text="@string/search"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <!-- Image Section with Two Rows and Two Columns -->
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:padding="16dp"
+            android:alignmentMode="alignMargins"
+            android:useDefaultMargins="true">
+
+            <ImageView
+                android:id="@+id/featureImage1"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_columnWeight="1"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/image1_desc"
+                android:src="@drawable/image1" />
+
+            <ImageView
+                android:id="@+id/featureImage2"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_columnWeight="1"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/image2_desc"
+                android:src="@drawable/image2" />
+
+            <ImageView
+                android:id="@+id/featureImage3"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_columnWeight="1"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image3" />
+
+            <ImageView
+                android:id="@+id/featureImage4"
+                android:layout_width="0dp"
+                android:layout_height="150dp"
+                android:layout_columnWeight="1"
+                android:scaleType="centerCrop"
+                android:src="@drawable/image4" />
+        </GridLayout>
+
+        <!-- Featured Section -->
+        <TextView
+            android:id="@+id/featuredSectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="@string/featured_section_title"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/featured_item_1"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="#000000" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/featured_item_2"
+                android:padding="8dp"
+                android:textSize="16sp"
+                android:textColor="#000000" />
+        </LinearLayout>
+
+        <!-- Bottom Navigation Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:background="#F0F0F0"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <Button
+                android:id="@+id/homeButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_background"
+                android:text="@string/button_home"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/tutorialButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_background"
+                android:text="@string/button_tutorials"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/MapButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_background"
+                android:text="@string/button_map"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/ScanButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_background"
+                android:text="@string/button_scan"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/chatButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_background"
+                android:text="@string/button_chat"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/meButton"
+                android:layout_width="0dp"
+                android:layout_height="60dp"
+                android:layout_weight="1"
+                android:background="@drawable/custom_button_background"
+                android:text="@string/button_me"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+        </LinearLayout>
     </LinearLayout>
-
-    <!-- Welcome Text -->
-    <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:padding="8dp"
-        android:text="@string/welcome_message"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="italic" />
-
-    <!-- Content Area with Images in Two Rows -->
-    <GridLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:alignmentMode="alignMargins"
-        android:columnCount="2"
-        android:padding="16dp"
-        android:rowCount="2"
-        android:useDefaultMargins="true">
-
-        <ImageView
-            android:id="@+id/image1"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/image1" />
-
-        <ImageView
-            android:id="@+id/image2"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/image2" />
-
-        <ImageView
-            android:id="@+id/image3"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/image3" />
-
-        <ImageView
-            android:id="@+id/image4"
-            android:layout_width="0dp"
-            android:layout_height="150dp"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:scaleType="centerCrop"
-            android:src="@drawable/image4" />
-    </GridLayout>
-
-    <!-- Bottom Navigation Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="#F0F0F0"
-        android:gravity="center"
-        android:orientation="horizontal"
-        android:padding="8dp">
-
-        <Button
-            android:id="@+id/homeButton"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_background"
-            android:text="@string/button_home"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/tutorialButton"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_background"
-            android:text="@string/button_tutorials"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-        <Button
-            android:id="@+id/MapButton"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_background"
-            android:text="@string/button_map"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-        <Button
-            android:id="@+id/ScanButton"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_background"
-            android:text="@string/button_scan"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/chatButton"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_background"
-            android:text="@string/button_chat"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/meButton"
-            android:layout_width="0dp"
-            android:layout_height="60dp"
-            android:layout_weight="1"
-            android:background="@drawable/custom_button_background"
-            android:text="@string/button_me"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

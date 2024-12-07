@@ -3,6 +3,7 @@ package com.cs407.elderassist_tutorial
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 
@@ -11,13 +12,17 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // Footer Navigation Buttons
+        // Initialize Footer Navigation Buttons
         val homeButton = findViewById<Button>(R.id.homeButton)
         val tutorialButton = findViewById<Button>(R.id.tutorialButton)
         val meButton = findViewById<Button>(R.id.meButton)
-        val chatButton = findViewById<Button>(R.id.chatButton) // Chat Button
-        val scanButton =findViewById<Button>(R.id.ScanButton)
+        val chatButton = findViewById<Button>(R.id.chatButton)
+        val scanButton = findViewById<Button>(R.id.ScanButton)
         val mapButton = findViewById<Button>(R.id.MapButton)
+
+        // Initialize Search Bar and Button
+        val searchBar = findViewById<EditText>(R.id.searchBar)
+        val searchButton = findViewById<Button>(R.id.searchButton)
 
         // Home Button: Stay on HomeActivity
         homeButton.setOnClickListener {
@@ -26,34 +31,50 @@ class HomeActivity : AppCompatActivity() {
 
         // Tutorial Button: Navigate to MainActivity
         tutorialButton.setOnClickListener {
-            val intent = Intent(this, MainActivity::class.java)
-            startActivity(intent)
+            navigateToActivity(MainActivity::class.java)
         }
 
-        // Me Button: Placeholder for Profile Page (Future Implementation)
+        // Me Button: Navigate to Profile Page
         meButton.setOnClickListener {
-            //Toast.makeText(this, "Me Button Clicked", Toast.LENGTH_SHORT).show()
-            val intent = Intent(this, LoginMainActivity::class.java)
-            startActivity(intent)
+            navigateToActivity(LoginMainActivity::class.java)
         }
 
         // Chat Button: Navigate to ChatActivity
         chatButton.setOnClickListener {
-            val intent = Intent(this, ChatActivity::class.java)
-            startActivity(intent)
+            navigateToActivity(ChatActivity::class.java)
         }
 
-        //yuki, scanButton
+        // Scan Button: Navigate to CameraScan
         scanButton.setOnClickListener {
-            val intent = Intent(this, CameraScan::class.java)
-            startActivity(intent)
+            navigateToActivity(CameraScan::class.java)
         }
 
         // Map Button: Navigate to MapActivity
         mapButton.setOnClickListener {
-            val intent = Intent(this, MapActivity::class.java)
-            startActivity(intent)
+            navigateToActivity(MapActivity::class.java)
         }
 
+        // Search Button Functionality
+        searchButton.setOnClickListener {
+            val query = searchBar.text.toString().trim().lowercase()
+            when (query) {
+                "tutorial" -> navigateToActivity(MainActivity::class.java)
+                "map" -> navigateToActivity(MapActivity::class.java)
+                "scan" -> navigateToActivity(CameraScan::class.java)
+                "chat" -> navigateToActivity(ChatActivity::class.java)
+                "me" -> navigateToActivity(LoginMainActivity::class.java)
+                else -> Toast.makeText(
+                    this,
+                    "Invalid search query. Try 'tutorial', 'map', 'scan', 'chat', or 'me'.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+    }
+
+    // Helper function to simplify navigation
+    private fun <T> navigateToActivity(activity: Class<T>) {
+        val intent = Intent(this, activity)
+        startActivity(intent)
     }
 }

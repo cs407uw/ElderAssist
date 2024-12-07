@@ -2,9 +2,17 @@
 
     <string name="app_name">ElderAssist</string>
     <string name="app_title">ElderAssist</string>
+    <string name="introduction_text">Welcome to ElderAssist, your companion for effortless navigation, communication, and health tracking!</string>
+    <string name="welcome_message">Explore tutorials, maps, medication scan and AI Chat designed to simplify your daily life.</string>
+    <string name="image1_desc">Illustration of navigating with maps</string>
+    <string name="image2_desc">Tutorial example for sending text messages</string>
+    <string name="featured_section_title">Explore Features</string>
+    <string name="featured_item_1">💡 Tip: Use the "Scan" button to capture and analyze information on the go.</string>
+    <string name="featured_item_2">🗺️ Navigate seamlessly with the integrated map to find your desired locations.</string>
+    <string name="featured_item_3">🎥 Tutorials: Access helpful videos on essential tools and services directly within the app.</string>
+    <string name="featured_item_4">📞 Chat: Instantly connect with our assistant for help and support.</string>
     <string name="search_hint">Search</string>
     <string name="cancel">Cancel</string>
-    <string name="welcome_message">Welcome to ElderAssist</string>
     <string name="button_home">Home</string>
     <string name="button_chat">Chat</string>
     <string name="button_tutorials">Tutorials</string>
