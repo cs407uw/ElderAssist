@@ -4,8 +4,13 @@ import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Geocoder
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -14,24 +19,41 @@ import androidx.lifecycle.lifecycleScope
 import com.cs407.elderassist_tutorial.data.NoteDatabase
 import com.cs407.elderassist_tutorial.data.Pharmacy
 import com.cs407.elderassist_tutorial.data.SavedLocation
+import com.cs407.elderassist_tutorial.utils.CSVimport
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.opencsv.CSVReader
 import kotlinx.coroutines.launch
+import java.io.FileReader
+import java.io.InputStreamReader
 import java.util.*
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
+    private lateinit var locationManager: LocationManager
     private val LOCATION_PERMISSION_REQUEST_CODE = 1
     private var selectedLocation: LatLng? = null
+    private var userLocation: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_map)
+        checkAndRequestPermissions()
+
+        lifecycleScope.launch {
+            try {
+                val csvReader = CSVReader(InputStreamReader(assets.open("pharmacy_data.csv")))
+                CSVimport.importPharmacyData(csvReader, this@MapActivity)
+                Log.d("CSVImport", "Pharmacy data imported successfully")
+            } catch (e: Exception) {
+                Log.e("CSVImport", "Error importing pharmacy data: ${e.message}")
+            }
+        }
 
         // Back Button
         val backButton = findViewById<Button>(R.id.backButton)
@@ -41,9 +63,31 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             finish()
         }
 
+        val searchButton = findViewById<Button>(R.id.searchPharmacyButton)
+        val searchInput = findViewById<EditText>(R.id.searchInput)
+        searchButton.setOnClickListener {
+            val medicineName = searchInput.text.toString()
+            if (medicineName.isNotEmpty()) {
+                searchPharmaciesWithMedicine(medicineName)
+            } else {
+                Toast.makeText(this, "Please enter a medicine name", Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        // Nearby Pharmacies Button
+        val nearbyButton = findViewById<Button>(R.id.nearbyPharmaciesButton)
+        nearbyButton.setOnClickListener {
+            showNearbyPharmacies()
+        }
+
+        locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+        requestLocationPermission()
+
         // Map Fragment Initialization
         val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+
 
         // Save Location Button
         val saveButton = findViewById<Button>(R.id.saveLocationButton)
@@ -54,10 +98,43 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
+    private fun requestLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            fetchUserLocation()
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
+        }
+    }
+
+    private fun fetchUserLocation() {
+        locationManager.requestLocationUpdates(
+            LocationManager.GPS_PROVIDER,
+            0L,
+            0f,
+            object : LocationListener {
+                override fun onLocationChanged(location: Location) {
+                    userLocation = LatLng(location.latitude, location.longitude)
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation ?: LatLng(0.0, 0.0), 15f))
+                    locationManager.removeUpdates(this) // Stop listening after fetching location
+                }
+
+                override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+                override fun onProviderEnabled(provider: String) {}
+                override fun onProviderDisabled(provider: String) {}
+            }
+        )
+    }
+
+
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
-        // Check Location Permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
             == PackageManager.PERMISSION_GRANTED) {
             mMap.isMyLocationEnabled = true
@@ -68,41 +145,110 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 LOCATION_PERMISSION_REQUEST_CODE
             )
         }
+    }
 
-        // Display pharmacies on the map
-        addPharmaciesToMap()
-
-        // Map Click Listener
-        mMap.setOnMapClickListener { latLng ->
-            mMap.clear()
-            mMap.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
-            selectedLocation = latLng
+    private fun checkAndRequestPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
         }
     }
 
-    private fun addPharmaciesToMap() {
+
+    private fun showNearbyPharmacies() {
         val database = NoteDatabase.getDatabase(this)
         val pharmacyDao = database.pharmacyDao()
 
         lifecycleScope.launch {
+            // Retrieve all pharmacies from the database
             val pharmacies = pharmacyDao.getAllPharmacies()
-            pharmacies.forEach { pharmacy ->
-                val latLng = getLatLngFromAddress(pharmacy.address)
-                mMap.addMarker(
-                    MarkerOptions()
-                        .position(latLng)
-                        .title(pharmacy.pharmacyName)
-                        .snippet("Hours: ${pharmacy.operatingHours ?: "Unknown"}")
-                )
+
+            if (pharmacies.isEmpty()) {
+                Toast.makeText(this@MapActivity, "No pharmacies found in the database", Toast.LENGTH_SHORT).show()
+                return@launch
             }
 
-            // Zoom to the first pharmacy if available
-            if (pharmacies.isNotEmpty()) {
-                val firstLatLng = getLatLngFromAddress(pharmacies[0].address)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(firstLatLng, 12f))
+            mMap.clear() // Clear previous markers
+
+            val count = pharmacyDao.countPharmacies()
+
+            Log.d("DatabaseDebug", "Pharmacy table row count: $count")
+            if (count == 0) {
+                Toast.makeText(this@MapActivity, "Pharmacy table is empty", Toast.LENGTH_SHORT).show()
+            }
+
+            pharmacies.forEach { pharmacy ->
+                val latLng = getLatLngFromAddress(pharmacy.address)
+                if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(latLng)
+                            .title(pharmacy.pharmacyName)
+                            .snippet("Hours: ${pharmacy.operatingHours ?: "Unknown"}")
+                    )
+                } else {
+                    Log.e("MapActivity", "Invalid coordinates for pharmacy: ${pharmacy.pharmacyName}")
+                }
+            }
+
+            // Center the map on the first pharmacy or user location if available
+            val firstLatLng = pharmacies.firstOrNull()?.let { getLatLngFromAddress(it.address) }
+            val centerLatLng = firstLatLng ?: userLocation ?: LatLng(0.0, 0.0)
+
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, 12f))
+        }
+    }
+
+
+    private fun searchPharmaciesWithMedicine(medicineName: String) {
+        val database = NoteDatabase.getDatabase(this)
+        val pharmacyMedicationDao = database.pharmacyMedicationDao()
+        val medicationDao = database.medicationDao()
+
+        lifecycleScope.launch {
+            val medication = medicationDao.getMedicationByName(medicineName)
+            if (medication == null) {
+                Toast.makeText(this@MapActivity, "Medicine not found", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            val pharmacies = pharmacyMedicationDao.getPharmaciesByMedication(medication.medicationId)
+            if (pharmacies.isEmpty()) {
+                Toast.makeText(this@MapActivity, "No pharmacies found for this medicine", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            val userLatLng = userLocation ?: LatLng(0.0, 0.0)
+            val closestPharmacy = pharmacies.minByOrNull { pharmacy ->
+                val pharmacyLatLng = getLatLngFromAddress(pharmacy.address)
+                val results = FloatArray(1)
+                android.location.Location.distanceBetween(
+                    userLatLng.latitude, userLatLng.longitude,
+                    pharmacyLatLng.latitude, pharmacyLatLng.longitude,
+                    results
+                )
+                results[0]
+            }
+
+            if (closestPharmacy != null) {
+                val closestLatLng = getLatLngFromAddress(closestPharmacy.address)
+                mMap.addMarker(
+                    MarkerOptions()
+                        .position(closestLatLng)
+                        .title("Closest Pharmacy: ${closestPharmacy.pharmacyName}")
+                        .snippet("Address: ${closestPharmacy.address}")
+                )
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closestLatLng, 15f))
+            } else {
+                Toast.makeText(this@MapActivity, "No pharmacies found nearby", Toast.LENGTH_SHORT).show()
             }
         }
     }
+
+
 
     private fun getLatLngFromAddress(address: String): LatLng {
         return try {

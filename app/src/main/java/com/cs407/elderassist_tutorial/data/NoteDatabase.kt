@@ -129,6 +129,9 @@ interface PharmacyDao {
 
     @Query("SELECT * FROM Pharmacy")
     suspend fun getAllPharmacies(): List<Pharmacy> // 获取所有药房
+    @Query("SELECT COUNT(*) FROM Pharmacy")
+    suspend fun countPharmacies(): Int
+
 }
 @Dao
 interface MedicationDao {
