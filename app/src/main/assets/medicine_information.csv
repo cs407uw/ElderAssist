@@ -1,14 +1,4 @@
-Medicine Name,MedicationDescription
-BoomBoom Nasal Stick,Enhances breathing with natural oils.
-Dulcolax,Provides relief from constipation.
-AZO,Eases urinary pain and discomfort.
-Voltaren,Relieves arthritis pain topically.
-Mucinex DM,Loosens mucus and suppresses cough.
-DayQuil/NyQuil,Treats cold and flu symptoms.
-Isopropyl Alcohol,Used for cleaning and disinfection.
-MiraLAX,Treats occasional constipation.
-Tylenol,Alleviates mild to moderate pain.
-NasalFresh,Cleanses nasal passages with irrigation.
+Medicine Name,Medication Description
 Neosporin,Prevents infection in minor cuts.
 Iberogast,Relieves digestive symptoms and IBS.
 Zyrtec,Manages allergic reactions and symptoms.
@@ -23,3 +13,13 @@ Halls,Soothes sore throats and coughs.
 Vicks,Relieves cough and congestion.
 Prevacid,Reduces stomach acid and treats GERD.
 Wonderbelly,Antacid that neutralizes stomach acid.
+BoomBoom Nasal Stick,Enhances breathing with natural oils.
+Dulcolax,Provides relief from constipation.
+AZO,Eases urinary pain and discomfort.
+Voltaren,Relieves arthritis pain topically.
+Mucinex DM,Loosens mucus and suppresses cough.
+DayQuil/NyQuil,Treats cold and flu symptoms.
+Isopropyl Alcohol,Used for cleaning and disinfection.
+MiraLAX,Treats occasional constipation.
+Tylenol,Alleviates mild to moderate pain.
+NasalFresh,Cleanses nasal passages with irrigation.
