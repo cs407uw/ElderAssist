@@ -73,7 +73,8 @@
     <string name="loading_weather">Loading weather...</string>
     <string name="elderassist">ElderAssist</string>
     <string name="welcome_image" />
-    <string name="map">Map</string> />
+    <string name="map">Map</string>
+    />
 
 
 </resources>
