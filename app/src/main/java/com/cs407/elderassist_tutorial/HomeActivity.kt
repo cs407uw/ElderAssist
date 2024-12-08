@@ -3,144 +3,110 @@ package com.cs407.elderassist_tutorial
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import com.cs407.elderassist_tutorial.utils.CSVimport
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
-import java.io.InputStreamReader
+import com.cs407.elderassist_tutorial.data.WeatherResponse
+import com.cs407.elderassist_tutorial.data.WeatherService
+import com.cs407.elderassist_tutorial.utils.CSVimport
 import com.opencsv.CSVReader
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.InputStreamReader
 
 class HomeActivity : AppCompatActivity() {
+
+    private lateinit var weatherTextView: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
-        // Initialize Footer Navigation Buttons
-        val homeButton = findViewById<Button>(R.id.homeButton)
-        val tutorialButton = findViewById<Button>(R.id.tutorialButton)
-        val meButton = findViewById<Button>(R.id.meButton)
-        val chatButton = findViewById<Button>(R.id.chatButton)
-        val scanButton = findViewById<Button>(R.id.ScanButton)
-        val mapButton = findViewById<Button>(R.id.MapButton)
+        // Initialize Weather TextView
+        weatherTextView = findViewById(R.id.weatherTextView)
 
-        // Initialize Search Bar and Button
-        val searchBar = findViewById<EditText>(R.id.searchBar)
-        val searchButton = findViewById<Button>(R.id.searchButton)
+        // Set up button navigation
+        setupButtonNavigation()
 
-        // Home Button: Stay on HomeActivity
-        homeButton.setOnClickListener {
-            // Do nothing, already on HomeActivity
-        }
+        // Fetch weather data
+        fetchWeather()
 
-        // Tutorial Button: Navigate to MainActivity
+        // Import CSV data
+        importCSVData()
+    }
+
+
+    private fun setupButtonNavigation() {
+        // Find buttons by ID as ImageView
+        val tutorialButton = findViewById<ImageView>(R.id.tutorialButton)
+        val mapButton = findViewById<ImageView>(R.id.mapButton)
+        val scanButton = findViewById<ImageView>(R.id.scanButton)
+        val chatButton = findViewById<ImageView>(R.id.chatButton)
+        val meButton = findViewById<ImageView>(R.id.meButton)
+
+        // Set up navigation for each button
         tutorialButton.setOnClickListener {
             navigateToActivity(MainActivity::class.java)
         }
 
-        // Me Button: Navigate to Profile Page
-        meButton.setOnClickListener {
-            navigateToActivity(LoginMainActivity::class.java)
-        }
-
-        // Chat Button: Navigate to ChatActivity
-        chatButton.setOnClickListener {
-            navigateToActivity(ChatActivity::class.java)
-        }
-
-        // Scan Button: Navigate to CameraScan
-        scanButton.setOnClickListener {
-            navigateToActivity(CameraScan::class.java)
-        }
-
-        // Map Button: Navigate to MapActivity
         mapButton.setOnClickListener {
             navigateToActivity(MapActivity::class.java)
         }
 
-        // Search Button Functionality
-        searchButton.setOnClickListener {
-            val query = searchBar.text.toString().trim().lowercase()
-            when (query) {
-                "tutorial" -> navigateToActivity(MainActivity::class.java)
-                "map" -> navigateToActivity(MapActivity::class.java)
-                "scan" -> navigateToActivity(CameraScan::class.java)
-                "chat" -> navigateToActivity(ChatActivity::class.java)
-                "me" -> navigateToActivity(LoginMainActivity::class.java)
-                else -> Toast.makeText(
-                    this,
-                    "Invalid search query. Try 'tutorial', 'map', 'scan', 'chat', or 'me'.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
+        scanButton.setOnClickListener {
+            navigateToActivity(CameraScan::class.java)
         }
 
-        val startGameButton = findViewById<Button>(R.id.startGameButton)
-        startGameButton.setOnClickListener {
-            navigateToActivity(TetrisGameActivity::class.java)
+        chatButton.setOnClickListener {
+            navigateToActivity(ChatActivity::class.java)
         }
 
-        // database
-        //val csvFilePath = "path/to/your/csv/file.csv"
+        meButton.setOnClickListener {
+            navigateToActivity(LoginMainActivity::class.java)
+        }
+    }
+
+    private fun <T> navigateToActivity(activity: Class<T>) {
+        val intent = Intent(this, activity)
+        startActivity(intent)
+    }
+
+    // Import CSV Data
+    private fun importCSVData() {
         lifecycleScope.launch {
             try {
-                // 创建 Pharmacy 的 CSVReader
                 val inputStreamPharmacy = assets.open("pharmacy_data.csv")
                 val csvReaderPharmacy = CSVReader(InputStreamReader(inputStreamPharmacy))
                 CSVimport.importPharmacyData(csvReaderPharmacy, applicationContext)
 
-                // 创建 Medication 的 CSVReader
-
                 val inputStreamMedication = assets.open("medicine_information.csv")
-
                 val csvReaderMedication = CSVReader(InputStreamReader(inputStreamMedication))
                 CSVimport.importMedicationData(csvReaderMedication, applicationContext)
 
-                // 创建 PharmacyMedication 的 CSVReader
                 val inputStreamPharmacyMedication = assets.open("pharmacy_data.csv")
                 val csvReaderPharmacyMedication = CSVReader(InputStreamReader(inputStreamPharmacyMedication))
                 CSVimport.linkPharmacyAndMedications(csvReaderPharmacyMedication, applicationContext)
 
-                Log.d("CSVImporter", "CSV success")
-                // 查询并打印数据库内容
+                Log.d("CSVImporter", "CSV import success")
                 logDatabaseInfo()
-
-//                // 测试 searchPharmaciesByMedication
-//                val medicineName = "Tylenol" // 替换为你的 CSV 数据中的药品名称
-//                val pharmacies = withContext(Dispatchers.IO) {
-//                    SearchUtils.searchPharmaciesByMedication(applicationContext, medicineName)
-//                }
-//                Log.d("LoginMainActivity", "Pharmacies for $medicineName: $pharmacies")
-//
-//                // 测试 searchMedicationsByPharmacy
-//                val pharmacyName = "CVS Pharmacy" // 替换为你的 CSV 数据中的药店名称
-//                val medications = withContext(Dispatchers.IO) {
-//                    SearchUtils.searchMedicationsByPharmacy(applicationContext, pharmacyName)
-//                }
-//                Log.d("LoginMainActivity", "Medications for $pharmacyName: $medications")
-
             } catch (e: Exception) {
                 Log.e("CSVImporter", "CSV error: ${e.message}")
             }
         }
     }
 
-    // 查询并打印数据库内容
+    // Log Database Info
     private suspend fun logDatabaseInfo() {
         withContext(Dispatchers.IO) {
             val database = com.cs407.elderassist_tutorial.data.NoteDatabase.getDatabase(applicationContext)
-
-            // 打印所有药房信息
             val pharmacies = database.pharmacyDao().getAllPharmacies()
             pharmacies.forEach { pharmacy ->
                 Log.d("Database-Pharmacy", "Pharmacy: ${pharmacy.pharmacyName}, Address: ${pharmacy.address}")
             }
-
-            // 打印所有药品信息
             val medications = database.medicationDao().getAllMedications()
             medications.forEach { medication ->
                 Log.d("Database-Medication", "Medication: ${medication.medicineName}, Description: ${medication.medicationDescription}")
@@ -148,9 +114,32 @@ class HomeActivity : AppCompatActivity() {
         }
     }
 
-    // Helper function to simplify navigation
-    private fun <T> navigateToActivity(activity: Class<T>) {
-        val intent = Intent(this, activity)
-        startActivity(intent)
+    // Fetch Weather Data
+    private fun fetchWeather() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val weatherService = retrofit.create(WeatherService::class.java)
+        val apiKey = "f1682bfc95490e71fc2e7e2aca222825"
+        val latitude = 43.0731
+        val longitude = -89.4012
+
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
+                    weatherService.getCurrentWeather(latitude, longitude, apiKey)
+                }
+                updateWeatherUI(response)
+            } catch (e: Exception) {
+                Log.e("WeatherError", "Failed to fetch weather: ${e.message}")
+            }
+        }
+    }
+
+    // Update Weather Information in UI
+    private fun updateWeatherUI(weather: WeatherResponse) {
+        weatherTextView.text = "Weather in ${weather.name}: ${weather.main.temp}°C, ${weather.weather[0].description}"
     }
 }

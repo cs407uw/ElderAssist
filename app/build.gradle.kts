@@ -40,21 +40,21 @@ android {
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.legacy:legacy-support-v4:1.0.0")
-    implementation("androidx.exifinterface:exifinterface:1.3.7")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.0")
-    implementation("androidx.core:core-ktx:1.15.0")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.exifinterface)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.core.ktx)
 
 // Testing libraries
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
     // AndroidX libraries
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation ("androidx.paging:paging-runtime:3.3.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+    implementation(libs.androidx.appcompat)
+    implementation (libs.androidx.paging.runtime)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
@@ -71,24 +71,24 @@ dependencies {
     implementation(libs.androidx.room.ktx)
 
     // ML Kit libraries
-    implementation("com.google.mlkit:barcode-scanning:17.3.0")
-    implementation("com.google.mlkit:text-recognition:16.0.1")
-    implementation ("com.google.mlkit:face-detection:16.1.7")
-    implementation ("com.google.mlkit:image-labeling:17.0.9")
+    implementation(libs.barcode.scanning)
+    implementation(libs.text.recognition)
+    implementation (libs.face.detection)
+    implementation (libs.image.labeling)
 
     // Google Play Services
-    implementation("com.google.android.gms:play-services-location:21.3.0")
-    implementation("com.google.android.gms:play-services-maps:19.0.0")
+    implementation(libs.gms.play.services.location)
+    implementation(libs.play.services.maps)
 
     // Networking libraries
-    implementation("com.squareup.okhttp3:okhttp:4.12.0")
-    implementation("com.squareup.moshi:moshi:1.15.2")
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.2")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.okhttp)
+    implementation(libs.moshi)
+    implementation(libs.moshi.kotlin)
+    implementation(libs.glide)
 
     // Other libraries
-    implementation ("com.opencsv:opencsv:5.9")
-    implementation ("com.google.code.gson:gson:2.11.0")
+    implementation (libs.opencsv)
+    implementation (libs.gson)
 
     implementation(libs.androidx.room.ktx)
 
@@ -97,21 +97,27 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     testImplementation(libs.androidx.espresso.core)
-    testImplementation("org.robolectric:robolectric:4.14.1")
-    testImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    testImplementation("androidx.test.espresso:espresso-contrib:3.6.1")
-    testImplementation("androidx.test.espresso:espresso-intents:3.6.1")
-    testImplementation("androidx.test:rules:1.6.1")
-    testImplementation("androidx.test:runner:1.6.2")
-    testImplementation("io.github.takahirom.roborazzi:roborazzi:1.34.0")
-    testImplementation("io.github.takahirom.roborazzi:roborazzi-junit-rule:1.34.0")
-    testImplementation("org.mockito:mockito-core:5.14.2")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.espresso.core)
+    testImplementation(libs.androidx.espresso.contrib)
+    testImplementation(libs.androidx.espresso.intents)
+    testImplementation(libs.androidx.rules)
+    testImplementation(libs.androidx.runner)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.junit.rule)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.mockito.kotlin)
     testImplementation(libs.core.testing)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation(libs.kotlinx.coroutines.test)
 
-    implementation ("androidx.core:core-ktx:1.15.0")
-    implementation ("androidx.appcompat:appcompat:1.7.0")
+    implementation (libs.androidx.core.ktx)
+    implementation (libs.androidx.appcompat)
+    implementation (libs.gms.play.services.location)
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.androidx.viewpager2)
+
+
 
 }
