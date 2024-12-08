@@ -138,7 +138,7 @@ interface MedicationDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertMedication(medication: Medication): Long
 
-    @Query("SELECT * FROM medication WHERE medicineName = :name")
+    @Query("SELECT * FROM medication WHERE LOWER(medicineName) = LOWER(:name)")
     suspend fun getMedicationByName(name: String): Medication?
 
     @Query("SELECT * FROM Medication")

@@ -14,7 +14,6 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import java.io.InputStreamReader
 import com.opencsv.CSVReader
-import com.cs407.elderassist_tutorial.utils.SearchUtils
 
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

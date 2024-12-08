@@ -42,53 +42,92 @@ object CSVimport {
         }
     }
 
-    suspend fun importMedicationData(csvReader: CSVReader, context: Context) {
-        val database = NoteDatabase.getDatabase(context)
-        val medicationDao = database.medicationDao()
+//    suspend fun importMedicationData(csvReader: CSVReader, context: Context) {
+//        val database = NoteDatabase.getDatabase(context)
+//        val medicationDao = database.medicationDao()
+//
+//        csvReader.readAll().drop(1).forEach { row ->
+//
+//            val medicineName = row[0]
+//            val description = row[1]
+//
+//            val medication = Medication(
+//                medicineName = medicineName,
+//                medicationDescription = description
+//            )
+//            medicationDao.insertMedication(medication)
+//        }
+//    }
 
-        csvReader.readAll().drop(1).forEach { row ->
+    suspend fun importMedicationData(reader: CSVReader, context: Context) {
+        val db = NoteDatabase.getDatabase(context)
+        val medicationDao = db.medicationDao()
 
-            val medicineName = row[0]
-            val description = row[1]
+        reader.readNext() // Skip header
+        reader.forEach { line ->
+            val medications = line[8].split(",").map { it.trim().lowercase() }
 
-            val medication = Medication(
-                medicineName = medicineName,
-                medicationDescription = description
-            )
-            medicationDao.insertMedication(medication)
+            medications.forEach { medicineName ->
+                val medicationDescription = "Description not available"
+
+                val medication = Medication(medicineName = medicineName, medicationDescription = medicationDescription)
+                medicationDao.insertMedication(medication)
+                Log.d("CSVImport", "Imported medication: $medicineName")
+            }
         }
     }
 
-    suspend fun linkPharmacyAndMedications(csvReader: CSVReader, context: Context) {
-        val database = NoteDatabase.getDatabase(context)
-        val pharmacyMedicationDao = database.pharmacyMedicationDao()
-        val medicationDao = database.medicationDao()
+    //    suspend fun linkPharmacyAndMedications(csvReader: CSVReader, context: Context) {
+//        val database = NoteDatabase.getDatabase(context)
+//        val pharmacyMedicationDao = database.pharmacyMedicationDao()
+//        val medicationDao = database.medicationDao()
+//
+//        csvReader.readAll().drop(1).forEach { row ->
+//            if (row.any { it.isBlank() }) {
+//                return@forEach
+//            }
+//
+//            val pharmacyId = row[0].toInt()
+//            val medications = row[8].split(",").map { it.trim() }
+//            Log.d("CSVImporter", "Pharmacy ID: $pharmacyId, Medications: $medications")
+//
+//            medications.forEach { medicineName ->
+//                val medication = medicationDao.getMedicationByName(medicineName)
+//                if (medication == null) {
+//                    Log.d("CSVImporter", "Medication not found: $medicineName")
+//                } else {
+//                    pharmacyMedicationDao.insertPharmacyMedication(
+//                        PharmacyMedication(pharmacyId = pharmacyId, medicationId = medication.medicationId)
+//                    )
+//                    Log.d(
+//                        "CSVImporter",
+//                        "Inserted PharmacyMedication -> Pharmacy ID: $pharmacyId, Medication ID: ${medication.medicationId}"
+//                    )
+//                }
+//            }
+//        }
+suspend fun linkPharmacyAndMedications(reader: CSVReader, context: Context) {
+    val db = NoteDatabase.getDatabase(context)
+    val medicationDao = db.medicationDao()
+    val pharmacyMedicationDao = db.pharmacyMedicationDao()
 
-        csvReader.readAll().drop(1).forEach { row ->
-            if (row.any { it.isBlank() }) {
-                // 跳过有空字段的行
-                return@forEach
-            }
+    reader.readNext() // Skip header
+    reader.forEach { line ->
+        val pharmacyId = line[0].toInt()
+        val medications = line[8].split(",").map(String::trim)
 
-            val pharmacyId = row[0].toInt()
-            val medications = row[8].split(",").map { it.trim() }
-            Log.d("CSVImporter", "Pharmacy ID: $pharmacyId, Medications: $medications")
-
-            medications.forEach { medicineName ->
-                val medication = medicationDao.getMedicationByName(medicineName)
-                if (medication == null) {
-                    Log.d("CSVImporter", "Medication not found: $medicineName")
-                } else {
-                    pharmacyMedicationDao.insertPharmacyMedication(
-                        PharmacyMedication(pharmacyId = pharmacyId, medicationId = medication.medicationId)
-                    )
-                    Log.d(
-                        "CSVImporter",
-                        "Inserted PharmacyMedication -> Pharmacy ID: $pharmacyId, Medication ID: ${medication.medicationId}"
-                    )
-                }
+        medications.forEach { medicineName ->
+            val medication = medicationDao.getMedicationByName(medicineName)
+            if (medication != null) {
+                val pharmacyMedication = PharmacyMedication(pharmacyId = pharmacyId, medicationId = medication.medicationId)
+                pharmacyMedicationDao.insertPharmacyMedication(pharmacyMedication)
+                Log.d("CSVImport", "Linked pharmacy $pharmacyId with medication $medicineName (ID: ${medication.medicationId})")
+            } else {
+                Log.d("CSVImport", "Medication not found for linking: $medicineName")
             }
         }
+    }
+}
     }
 //测试
 //    suspend fun logPharmacyMedicationData(context: Context) {
@@ -107,4 +146,3 @@ object CSVimport {
 //            }
 //        }
 //    }
-}
