@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 data class VideoItem(val title: String, val videoId: String)
 
 class VideoAdapter(
-    private val videoList: List<VideoItem>,
+    private var videoList: List<VideoItem>,
     private val onVideoClick: (String) -> Unit
 ) : RecyclerView.Adapter<VideoAdapter.VideoViewHolder>() {
 
@@ -45,6 +45,11 @@ class VideoAdapter(
 
     override fun getItemCount(): Int {
         return videoList.size
+    }
+
+    fun updateData(newList: List<VideoItem>) {
+        videoList = newList
+        notifyDataSetChanged()
     }
 
 }

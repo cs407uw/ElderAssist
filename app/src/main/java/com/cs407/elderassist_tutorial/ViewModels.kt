@@ -9,7 +9,7 @@ data class UserState(
     val id: Int = 0,
     val name: String = "",
     val passwd: String = "",
-    val randomInfo: String = "" // 添加随机信息字段
+    val randomInfo: String = ""
 )
 
 class UserViewModel : ViewModel() {

@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="default_recycler_margin_top">16dp</dimen>
+    <dimen name="search_result_margin_top">8dp</dimen>
+</resources>
