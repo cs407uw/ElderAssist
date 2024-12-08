@@ -79,6 +79,11 @@ class HomeActivity : AppCompatActivity() {
             }
         }
 
+        val startGameButton = findViewById<Button>(R.id.startGameButton)
+        startGameButton.setOnClickListener {
+            navigateToActivity(TetrisGameActivity::class.java)
+        }
+
         // database
         //val csvFilePath = "path/to/your/csv/file.csv"
         lifecycleScope.launch {

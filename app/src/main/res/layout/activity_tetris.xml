@@ -7,4 +7,24 @@
         android:id="@+id/tetrisView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
+
+    <TextView
+        android:id="@+id/gameOverTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Game Over! Your total score is: 0"
+        android:textColor="#FF0000"
+        android:textSize="24sp"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+
+    <Button
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Back"
+        android:visibility="gone"
+        android:layout_below="@id/gameOverTextView"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"/>
 </RelativeLayout>
