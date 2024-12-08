@@ -8,5 +8,9 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+<!--    <style name="Theme.MyApp.Splash" parent="Theme.MaterialComponents.DayNight.NoActionBar">-->
+<!--        <item name="android:windowBackground">@drawable/splash_background</item>-->
+<!--    </style>-->
+
     <style name="Theme.elderassist_tutorial" parent="Base.Theme.elderassist_tutorial" />
 </resources>

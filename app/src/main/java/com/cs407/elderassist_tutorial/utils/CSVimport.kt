@@ -16,7 +16,6 @@ object CSVimport {
 
         csvReader.readAll().drop(1).forEach { row ->
             if (row.any { it.isBlank() }) {
-                // 跳过有空字段的行
                 return@forEach
             }
             val pharmacyId = row[0].toInt()
@@ -111,7 +110,7 @@ suspend fun linkPharmacyAndMedications(reader: CSVReader, context: Context) {
     val medicationDao = db.medicationDao()
     val pharmacyMedicationDao = db.pharmacyMedicationDao()
 
-    reader.readNext() // Skip header
+    reader.readNext()
     reader.forEach { line ->
         val pharmacyId = line[0].toInt()
         val medications = line[8].split(",").map(String::trim)
