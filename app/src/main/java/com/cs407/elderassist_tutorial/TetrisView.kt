@@ -7,7 +7,6 @@ import android.util.AttributeSet
 import android.util.TypedValue
 import android.view.KeyEvent
 import android.view.View
-import androidx.core.content.ContextCompat
 
 class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     private val paint = Paint()
@@ -20,19 +19,22 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     private val backgroundBitmap = BitmapFactory.decodeResource(resources, R.drawable.tetris_background)
 
+    private val offsetY = spToPx(16)
+
     private val shapes = arrayOf(
-        arrayOf(intArrayOf(1, 1, 1, 1)),
-        arrayOf(intArrayOf(1, 1, 1), intArrayOf(0, 1, 0)),
-        arrayOf(intArrayOf(1, 1), intArrayOf(1, 1)),
-        arrayOf(intArrayOf(0, 1, 1), intArrayOf(1, 1, 0)),
-        arrayOf(intArrayOf(1, 1, 0), intArrayOf(0, 1, 1)),
-        arrayOf(intArrayOf(1, 1, 1), intArrayOf(1, 0, 0)),
-        arrayOf(intArrayOf(1, 1, 1), intArrayOf(0, 0, 1))
+        arrayOf(intArrayOf(1, 1, 1, 1)), // I 形
+        arrayOf(intArrayOf(1, 1, 1), intArrayOf(0, 1, 0)), // T 形
+        arrayOf(intArrayOf(1, 1), intArrayOf(1, 1)), // O 形
+        arrayOf(intArrayOf(0, 1, 1), intArrayOf(1, 1, 0)), // S 形
+        arrayOf(intArrayOf(1, 1, 0), intArrayOf(0, 1, 1)), // Z 形
+        arrayOf(intArrayOf(1, 1, 1), intArrayOf(1, 0, 0)), // L 形
+        arrayOf(intArrayOf(1, 1, 1), intArrayOf(0, 0, 1))  // J 形
     )
 
     private val colors = arrayOf(
-        Color.CYAN, Color.MAGENTA, Color.YELLOW,
-        Color.GREEN, Color.RED, Color.BLUE, Color.parseColor("#FFA500")
+        Color.parseColor("#CB1B45"), Color.parseColor("#FFC408"), Color.parseColor("#A5DEE4"),
+        Color.parseColor("#6C6024"), Color.parseColor("#DB4D6D"), Color.parseColor("#C18A26"),
+        Color.parseColor("#4A225D")
     )
 
     private var currentShape = shapes[random.nextInt(shapes.size)]
@@ -78,20 +80,6 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
     }
 
-    private fun moveBlockLeft() {
-        if (canMove(currentShape, currentX - 1, currentY)) {
-            currentX -= 1
-            invalidate()
-        }
-    }
-
-    private fun moveBlockRight() {
-        if (canMove(currentShape, currentX + 1, currentY)) {
-            currentX += 1
-            invalidate()
-        }
-    }
-
     private fun canMove(shape: Array<IntArray>, x: Int, y: Int): Boolean {
         for (i in shape.indices) {
             for (j in shape[i].indices) {
@@ -130,7 +118,7 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun checkGameOverCondition() {
-        if (currentY * cellSize < spToPx(24)) {
+        if (currentY <= 0) {
             handler.removeCallbacks(updateRunnable)
             showGameOver()
         }
@@ -142,17 +130,11 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
             showGameOver()
             return
         }
-
         currentShape = shapes[random.nextInt(shapes.size)]
         currentColor = colors[random.nextInt(colors.size)]
         currentX = cols / 2 - 1
         currentY = 0
         blockCount++
-
-        if (!canMove(currentShape, currentX, currentY)) {
-            handler.removeCallbacks(updateRunnable)
-            showGameOver()
-        }
     }
 
     private fun showGameOver() {
@@ -167,7 +149,11 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
     }
 
     private fun drawBackground(canvas: Canvas) {
-        canvas.drawBitmap(backgroundBitmap, null, Rect(0, 0, width, height), null)
+        val gridWidth = cols * cellSize
+        val gridHeight = rows * cellSize
+
+        val rect = Rect(0, offsetY, gridWidth, gridHeight + offsetY)
+        canvas.drawBitmap(backgroundBitmap, null, rect, null)
     }
 
     private fun drawGrid(canvas: Canvas) {
@@ -178,9 +164,9 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                     paint.color = grid[i][j]
                     canvas.drawRect(
                         j * cellSize.toFloat(),
-                        i * cellSize.toFloat(),
+                        i * cellSize.toFloat() + offsetY,
                         (j + 1) * cellSize.toFloat(),
-                        (i + 1) * cellSize.toFloat(),
+                        (i + 1) * cellSize.toFloat() + offsetY,
                         paint
                     )
                 }
@@ -195,28 +181,14 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
                 if (currentShape[i][j] != 0) {
                     canvas.drawRect(
                         (currentX + j) * cellSize.toFloat(),
-                        (currentY + i) * cellSize.toFloat(),
+                        (currentY + i) * cellSize.toFloat() + offsetY,
                         (currentX + j + 1) * cellSize.toFloat(),
-                        (currentY + i + 1) * cellSize.toFloat(),
+                        (currentY + i + 1) * cellSize.toFloat() + offsetY,
                         paint
                     )
                 }
             }
         }
-    }
-
-    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        when (keyCode) {
-            KeyEvent.KEYCODE_DPAD_LEFT -> {
-                moveBlockLeft()
-                return true
-            }
-            KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                moveBlockRight()
-                return true
-            }
-        }
-        return super.onKeyDown(keyCode, event)
     }
 
     private fun spToPx(sp: Int): Int {

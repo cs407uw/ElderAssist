@@ -11,17 +11,21 @@ class TetrisGameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_tetris)
 
         val gameOverTextView = findViewById<TextView>(R.id.gameOverTextView)
-        val backButton = findViewById<Button>(R.id.backButton)
+        val restartButton = findViewById<Button>(R.id.restartButton)
+        val backButton = findViewById<Button>(R.id.topBackButton)
+        val tetrisView = findViewById<TetrisView>(R.id.tetrisView)
 
         backButton.setOnClickListener {
             finish()
         }
 
-        val tetrisView = findViewById<TetrisView>(R.id.tetrisView)
+        restartButton.setOnClickListener {
+            recreate()
+        }
+
         tetrisView.setGameOverListener { score ->
             gameOverTextView.text = "Game Over! Your total score is: $score"
             gameOverTextView.visibility = TextView.VISIBLE
-            backButton.visibility = Button.VISIBLE
         }
     }
 }
