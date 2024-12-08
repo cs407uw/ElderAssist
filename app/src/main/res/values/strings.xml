@@ -13,12 +13,6 @@
     <string name="featured_item_4">📞 Chat: Instantly connect with our assistant for help and support.</string>
     <string name="search_hint">Search</string>
     <string name="cancel">Cancel</string>
-    <string name="button_home">Home</string>
-    <string name="button_chat">Chat</string>
-    <string name="button_tutorials">Tutorials</string>
-    <string name="button_map">Map</string>
-    <string name="button_scan">Scan</string>
-    <string name="button_me">Me</string>
     <string name="tutorial_videos">Tutorial Videos</string>
     <string name="search">Search</string>
     <string name="tutorials_title">ElderAssist Video</string>
@@ -67,6 +61,19 @@
     <string name="detecting_face_error">Detecting Face error.</string>
     <string name="labeling_image_error">Labeling Image error.</string>
     <string name="camera_button_description">这是啥</string>
+    <string name="tutorial_button">Tutorial Button</string>
+    <string name="tutorial">Tutorial</string>
+    <string name="map_button">Map Button</string>
+    <string name="scan_button">Scan Button</string>
+    <string name="scan">Scan</string>
+    <string name="chat_button">Chat Button</string>
+    <string name="chat">Chat</string>
+    <string name="me_button">Me Button</string>
+    <string name="me">Me</string>
+    <string name="loading_weather">Loading weather...</string>
+    <string name="elderassist">ElderAssist</string>
+    <string name="welcome_image" />
+    <string name="map">Map</string> />
 
 
 </resources>
