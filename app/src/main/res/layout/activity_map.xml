@@ -12,44 +12,46 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/saveLocationButton"
+        app:layout_constraintBottom_toTopOf="@+id/searchPharmacyButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/searchInput"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:hint="Enter medicine name"
-        app:layout_constraintTop_toBottomOf="@+id/mapFragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/mapFragment" />
+
 
     <Button
         android:id="@+id/saveLocationButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="68dp"
         android:text="Save Location"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.838"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="24dp" />
 
     <Button
         android:id="@+id/backButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Back"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="24dp"
+        android:padding="8dp"
+        android:text="&lt;"
         app:layout_constraintEnd_toEndOf="parent"
-        android:padding="8dp" />
-
-    <!-- Show Saved Locations Button now appears below the search input (previously the search button's position) -->
-
-    <!-- Search button now appears at the bottom-left (previously the saved locations button's position) -->
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/showSavedLocationsButton"
@@ -65,8 +67,8 @@
         android:id="@+id/searchPharmacyButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="168dp"
-        android:layout_marginBottom="124dp"
+        android:layout_marginStart="280dp"
+        android:layout_marginBottom="84dp"
         android:text="Search"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
