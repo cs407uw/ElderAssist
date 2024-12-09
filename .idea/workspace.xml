@@ -30,12 +30,22 @@
           <theme>@style/Theme.elderassist_tutorial</theme>
         </config>
       </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_saved_locations.xml">
+        <config>
+          <theme>@style/Theme.elderassist_tutorial</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_scan.xml">
         <config>
           <theme>@style/Theme.elderassist_tutorial</theme>
         </config>
       </layout>
       <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/activity_video.xml">
+        <config>
+          <theme>@style/Theme.elderassist_tutorial</theme>
+        </config>
+      </layout>
+      <layout url="file://$PROJECT_DIR$/app/src/main/res/layout/item_saved_location.xml">
         <config>
           <theme>@style/Theme.elderassist_tutorial</theme>
         </config>
@@ -52,16 +62,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6061fa84-278b-4f9b-9946-83454819f17e" name="Changes" comment="fix bug in csv file">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/arrow_back.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/user.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/SavedLocationsActivity.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_saved_locations.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/res/layout/item_saved_location.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/outputFiles.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/ChatActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/ChatActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_left.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_left.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_right.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_right.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/MapActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/MapActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/data/NoteDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/data/NoteDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +83,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/houchunxin/.android/avd/Pixel_6_API_34_1.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/ziyanhe/.android/avd/Medium_Phone_API_35.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -119,9 +131,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="valueResourceFile" />
-        <option value="layoutResourceFile" />
         <option value="resourceFile" />
         <option value="Kotlin Class" />
+        <option value="layoutResourceFile" />
       </list>
     </option>
   </component>
@@ -137,7 +149,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/cs407uw/ElderAssist.git&quot;,
-    &quot;accountId&quot;: &quot;9488dc36-a2f4-416a-a7de-b1978835fcd3&quot;
+    &quot;accountId&quot;: &quot;d2609440-877f-4c5e-9f11-bb0ad7676875&quot;
   }
 }</component>
   <component name="ProblemsViewState">

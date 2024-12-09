@@ -14,6 +14,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
+
 //travel information
 @Entity(tableName = "travel_information")
 data class TravelInformation(
@@ -166,9 +167,40 @@ interface PharmacyMedicationDao {
     @Query("SELECT * FROM PharmacyMedication")
     suspend fun getAllPharmacyMedications(): List<PharmacyMedication>
 }
+
+@Entity(
+    tableName = "notes",
+    foreignKeys = [
+        ForeignKey(
+            entity = SavedLocation::class,
+            parentColumns = ["id"],
+            childColumns = ["locationId"],
+            onDelete = ForeignKey.CASCADE
+        )
+    ],
+    indices = [Index(value = ["locationId"])]
+)
+data class Note(
+    @PrimaryKey(autoGenerate = true) val noteId: Int = 0,
+    val locationId: Int,          // 对应SavedLocation的ID
+    val medicineName: String,
+    val medicationDescription: String,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+@Dao
+interface NoteDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertNote(note: Note)
+
+    @Query("SELECT * FROM notes WHERE locationId = :locationId")
+    suspend fun getNotesForLocation(locationId: Int): List<Note>
+}
+
+
 @Database(
-    entities = [User::class, Pharmacy::class, Medication::class, PharmacyMedication::class, SavedLocation::class, TravelInformation::class],
-    version = 3
+    entities = [User::class, Pharmacy::class, Medication::class, PharmacyMedication::class, SavedLocation::class, TravelInformation::class, Note::class],
+    version = 4
 )
 abstract class NoteDatabase : RoomDatabase() {
 
@@ -178,6 +210,8 @@ abstract class NoteDatabase : RoomDatabase() {
     abstract fun pharmacyMedicationDao(): PharmacyMedicationDao
     abstract fun savedLocationDao(): SavedLocationDao
     abstract fun travelInformationDao(): TravelInformationDao
+    abstract fun noteDao(): NoteDao
+
 
     companion object {
         @Volatile
