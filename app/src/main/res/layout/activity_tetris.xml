@@ -4,19 +4,37 @@
     android:layout_height="match_parent"
     android:background="#E6E6FA">
 
-    <Button
-        android:id="@+id/topBackButton"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:text="Back" />
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp">
+
+        <Button
+            android:id="@+id/topBackButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#DC9FB4"
+            android:text="Back"
+            android:layout_alignParentStart="true" />
+
+        <Button
+            android:id="@+id/restartButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#DC9FB4"
+            android:text="Restart"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
+
 
     <TextView
         android:id="@+id/tetrisTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/topBackButton"
+        android:layout_below="@id/buttonLayout"
         android:layout_marginTop="8dp"
         android:layout_centerHorizontal="true"
         android:text="~Tetris Challenge~"
@@ -28,39 +46,20 @@
         android:id="@+id/tetrisView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tetrisTitle" />
+        android:layout_below="@id/tetrisTitle"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/gameOverTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="287dp"
-        android:text="Game Over! Your total score is: 0"
+        android:layout_marginBottom="127dp"
+        android:text="   Game Over! Your total score is: 0"
         android:textColor="#644040"
         android:textSize="24sp"
-        android:layout_centerHorizontal="true"
         android:textStyle="bold"
         android:visibility="gone"/>
-
-    <Button
-        android:id="@+id/restartButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/gameOverTextView"
-        android:layout_marginTop="641dp"
-        android:layout_centerHorizontal="true"
-        android:text="Restart"
-        />
-
-    <!--    <Button-->
-<!--        android:id="@+id/restartButton"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_below="@id/gameOverTextView"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:text="Restart"-->
-<!--        android:visibility="gone" />-->
+    <!--    android:visibility="gone"-->
 
 </RelativeLayout>
