@@ -3,11 +3,7 @@ package com.cs407.elderassist_tutorial
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
-import android.widget.Button
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.ScrollView
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 
 class ChatActivity : AppCompatActivity() {
@@ -18,7 +14,7 @@ class ChatActivity : AppCompatActivity() {
     private lateinit var faqButton2: Button
     private lateinit var faqButton3: Button
     private lateinit var chatOutputContainer: LinearLayout
-    private lateinit var backButton: Button
+    private lateinit var backButton: ImageView
     private lateinit var chatOutputScrollView: ScrollView
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,6 +26,9 @@ class ChatActivity : AppCompatActivity() {
 
         // Set button click listeners
         setupClickListeners()
+
+        // Add ChatAI's welcome message
+        addChatBubble(isUser = false, getString(R.string.chat_welcome_message))
     }
 
     private fun initializeUIComponents() {
@@ -39,7 +38,7 @@ class ChatActivity : AppCompatActivity() {
         faqButton2 = findViewById(R.id.faqButton2)
         faqButton3 = findViewById(R.id.faqButton3)
         chatOutputContainer = findViewById(R.id.chatOutputContainer)
-        backButton = findViewById(R.id.backButton)
+        backButton = findViewById(R.id.backArrow)
         chatOutputScrollView = findViewById(R.id.chatOutputScrollView)
     }
 
@@ -70,7 +69,7 @@ class ChatActivity : AppCompatActivity() {
         ChatAgent.processMessage(message, this, object : ChatAgent.ChatAgentCallback {
             override fun onResponse(response: String) {
                 runOnUiThread {
-                    // Add AI response bubble
+                    // Add ChatAI's response bubble
                     addChatBubble(isUser = false, response)
                 }
             }
@@ -87,7 +86,6 @@ class ChatActivity : AppCompatActivity() {
     private fun addChatBubble(isUser: Boolean, message: String) {
         val chatBubble = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
-            setBackgroundResource(if (isUser) R.drawable.chat_bubble_right else R.drawable.chat_bubble_left)
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
@@ -95,6 +93,23 @@ class ChatActivity : AppCompatActivity() {
                 gravity = if (isUser) Gravity.END else Gravity.START
                 topMargin = 8 // Add space between bubbles
             }
+            setPadding(8, 8, 8, 8)
+        }
+
+        // Add head image
+        if (!isUser) {
+            val headImage = ImageView(this).apply {
+                setImageResource(R.drawable.logo) // ChatAI head image
+                layoutParams = LinearLayout.LayoutParams(60, 60).apply {
+                    marginEnd = 8
+                }
+            }
+            chatBubble.addView(headImage)
+        }
+
+        val messageBubble = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setBackgroundResource(if (isUser) R.drawable.chat_bubble_right else R.drawable.chat_bubble_left)
             setPadding(16, 12, 16, 12)
         }
 
@@ -104,7 +119,20 @@ class ChatActivity : AppCompatActivity() {
             textSize = 16f
         }
 
-        chatBubble.addView(messageText)
+        messageBubble.addView(messageText)
+        chatBubble.addView(messageBubble)
+
+        // Add user head image
+        if (isUser) {
+            val headImage = ImageView(this).apply {
+                setImageResource(R.drawable.user) // User head image
+                layoutParams = LinearLayout.LayoutParams(60, 60).apply {
+                    marginStart = 8
+                }
+            }
+            chatBubble.addView(headImage)
+        }
+
         chatOutputContainer.addView(chatBubble)
 
         // Scroll to the bottom of the chat
