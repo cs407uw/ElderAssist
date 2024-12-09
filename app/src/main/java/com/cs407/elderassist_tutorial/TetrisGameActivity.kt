@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 
 class TetrisGameActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,9 +16,13 @@ class TetrisGameActivity : AppCompatActivity() {
         val backButton = findViewById<Button>(R.id.topBackButton)
         val tetrisView = findViewById<TetrisView>(R.id.tetrisView)
 
+        tetrisView.requestFocus()
+
         backButton.setOnClickListener {
             finish()
         }
+
+        restartButton.visibility = Button.VISIBLE
 
         restartButton.setOnClickListener {
             recreate()
@@ -27,5 +32,9 @@ class TetrisGameActivity : AppCompatActivity() {
             gameOverTextView.text = "Game Over! Your total score is: $score"
             gameOverTextView.visibility = TextView.VISIBLE
         }
+
+
     }
+
+
 }

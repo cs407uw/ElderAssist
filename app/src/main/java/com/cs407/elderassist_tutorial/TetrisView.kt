@@ -58,6 +58,7 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         handler.postDelayed(updateRunnable, 500)
         isFocusable = true
         isFocusableInTouchMode = true
+        requestFocus()
     }
 
     fun setGameOverListener(listener: (Int) -> Unit) {
@@ -191,9 +192,39 @@ class TetrisView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
     }
 
+    override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
+        return when (keyCode) {
+            KeyEvent.KEYCODE_DPAD_LEFT -> {
+                moveBlockLeft()
+                true
+            }
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                moveBlockRight()
+                true
+            }
+            else -> super.onKeyDown(keyCode, event)
+        }
+    }
+
+    private fun moveBlockLeft() {
+        if (canMove(currentShape, currentX - 1, currentY)) {
+            currentX -= 1
+            invalidate()
+        }
+    }
+
+    private fun moveBlockRight() {
+        if (canMove(currentShape, currentX + 1, currentY)) {
+            currentX += 1
+            invalidate()
+        }
+    }
+
+
     private fun spToPx(sp: Int): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_SP, sp.toFloat(), resources.displayMetrics
         ).toInt()
     }
+
 }

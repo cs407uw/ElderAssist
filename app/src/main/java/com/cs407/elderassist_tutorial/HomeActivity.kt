@@ -3,6 +3,7 @@ package com.cs407.elderassist_tutorial
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -47,6 +48,7 @@ class HomeActivity : AppCompatActivity() {
         val scanButton = findViewById<ImageView>(R.id.scanButton)
         val chatButton = findViewById<ImageView>(R.id.chatButton)
         val meButton = findViewById<ImageView>(R.id.meButton)
+        val playTetrisButton=findViewById<Button>(R.id.playTetrisButton)
 
         // Set up navigation for each button
         tutorialButton.setOnClickListener {
@@ -67,6 +69,10 @@ class HomeActivity : AppCompatActivity() {
 
         meButton.setOnClickListener {
             navigateToActivity(LoginMainActivity::class.java)
+        }
+
+        playTetrisButton.setOnClickListener {
+            navigateToActivity(TetrisGameActivity::class.java)
         }
     }
 
