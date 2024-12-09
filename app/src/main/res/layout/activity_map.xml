@@ -88,9 +88,9 @@
                     android:id="@+id/searchPharmacyButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Search"
                     android:backgroundTint="#DC9FB4"
-                    android:textColor="#FFFFFF"/>
+                    android:text="Search"
+                    android:textColor="#FFFFFF" />
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
