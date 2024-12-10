@@ -52,16 +52,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6061fa84-278b-4f9b-9946-83454819f17e" name="Changes" comment="fix bug in csv file">
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/arrow_back.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/src/main/res/drawable/user.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/ChatActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/cs407/elderassist_tutorial/ChatActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_left.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_left.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_right.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/drawable/chat_bubble_right.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_chat.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/res/layout/activity_home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,7 +66,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/houchunxin/.android/avd/Pixel_6_API_34_1.avd)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/Users/xixinrui/.android/avd/Pixel_7_API_35.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
       <ProjectState />
@@ -137,7 +132,7 @@
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/cs407uw/ElderAssist.git&quot;,
-    &quot;accountId&quot;: &quot;9488dc36-a2f4-416a-a7de-b1978835fcd3&quot;
+    &quot;accountId&quot;: &quot;b2e88f74-0080-46fa-92f4-f132c789a472&quot;
   }
 }</component>
   <component name="ProblemsViewState">
@@ -166,6 +161,7 @@
     &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
     &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;ScreenshotViewer.SavePath&quot;: &quot;/Users/xixinrui/Downloads&quot;,
     &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
