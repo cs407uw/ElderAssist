@@ -92,7 +92,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         requestLocationPermission()
 
         // Map Fragment Initialization
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
+        val mapFragment =
+            supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         // Save Location Button
@@ -131,7 +132,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED) {
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             return
         }
 
@@ -142,9 +144,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             object : LocationListener {
                 override fun onLocationChanged(location: Location) {
                     userLocation = LatLng(location.latitude, location.longitude)
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLocation ?: LatLng(0.0, 0.0), 15f))
+                    mMap.moveCamera(
+                        CameraUpdateFactory.newLatLngZoom(
+                            userLocation ?: LatLng(
+                                0.0,
+                                0.0
+                            ), 15f
+                        )
+                    )
                     locationManager.removeUpdates(this) // Stop listening after fetching location
                 }
+
                 override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
                 override fun onProviderEnabled(provider: String) {}
                 override fun onProviderDisabled(provider: String) {}
@@ -155,7 +165,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
+            == PackageManager.PERMISSION_GRANTED
+        ) {
             mMap.isMyLocationEnabled = true
         } else {
             ActivityCompat.requestPermissions(
@@ -175,7 +186,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun checkAndRequestPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             ActivityCompat.requestPermissions(
                 this,
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -192,7 +207,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             val pharmacies = pharmacyDao.getAllPharmacies()
 
             if (pharmacies.isEmpty()) {
-                Toast.makeText(this@MapActivity, "No pharmacies found in the database", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@MapActivity,
+                    "No pharmacies found in the database",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@launch
             }
 
@@ -212,7 +231,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             .snippet("Hours: ${pharmacy.operatingHours ?: "Unknown"}")
                     )
                 } else {
-                    Log.e("MapActivity", "Invalid coordinates for pharmacy: ${pharmacy.pharmacyName}")
+                    Log.e(
+                        "MapActivity",
+                        "Invalid coordinates for pharmacy: ${pharmacy.pharmacyName}"
+                    )
                 }
             }
 
@@ -235,9 +257,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 return@launch
             }
 
-            val pharmacies = pharmacyMedicationDao.getPharmaciesByMedication(medication.medicationId)
+            val pharmacies =
+                pharmacyMedicationDao.getPharmaciesByMedication(medication.medicationId)
             if (pharmacies.isEmpty()) {
-                Toast.makeText(this@MapActivity, "No pharmacies found for this medicine", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@MapActivity,
+                    "No pharmacies found for this medicine",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@launch
             }
 
@@ -264,7 +291,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 )
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closestLatLng, 15f))
             } else {
-                Toast.makeText(this@MapActivity, "No pharmacies found nearby", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MapActivity, "No pharmacies found nearby", Toast.LENGTH_SHORT)
+                    .show()
             }
         }
     }
@@ -296,38 +324,26 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showSavedLocationsPanel() {
-        lifecycleScope.launch {
-            val savedLocations = savedLocationDao.getAllLocations()
-            if (savedLocations.isEmpty()) {
-                Toast.makeText(this@MapActivity, "No saved locations", Toast.LENGTH_SHORT).show()
-                return@launch
-            }
-
-            // Convert lat/lng to addresses if possible
-            val geocoder = Geocoder(this@MapActivity, Locale.getDefault())
-            val locationListStrings = savedLocations.map { loc ->
-                val addresses = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
-                val addressStr = if (!addresses.isNullOrEmpty()) {
-                    addresses[0].getAddressLine(0)
-                } else {
-                    "Lat: ${loc.latitude}, Lng: ${loc.longitude}"
-                }
-                "ID: ${loc.id} - $addressStr"
-            }
-
-            AlertDialog.Builder(this@MapActivity)
-                .setTitle("Saved Locations")
-                .setItems(locationListStrings.toTypedArray(), null)
-                .setPositiveButton("OK", null)
-                .show()
+        val showSavedLocationsButton = findViewById<Button>(R.id.showSavedLocationsButton)
+        showSavedLocationsButton.setOnClickListener {
+            val intent = Intent(this, SavedLocationsActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
                     mMap.isMyLocationEnabled = true
                 }
             } else {

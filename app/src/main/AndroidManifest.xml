@@ -72,6 +72,8 @@
             android:name=".LoginMainActivity"
             android:exported="true" />
 
+        <activity android:name=".SavedLocationsActivity" />
+
         <activity android:name=".TetrisGameActivity"
             android:exported="true">
             <intent-filter>
