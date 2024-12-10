@@ -13,6 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
         android:text="Back"
+        android:backgroundTint="#DC9FB4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -52,6 +53,7 @@
         android:layout_margin="16dp"
         android:text="Camera"
         android:onClick="launchCamera"
+        android:backgroundTint="#DC9FB4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/copyTextButton"
         app:layout_constraintStart_toStartOf="parent"
@@ -64,6 +66,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="Copy Text"
+        android:backgroundTint="#DC9FB4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/searchInMapButton"
         app:layout_constraintStart_toEndOf="@id/cameraButton"
@@ -76,6 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="Search in Map"
+        android:backgroundTint="#DC9FB4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/copyTextButton"
