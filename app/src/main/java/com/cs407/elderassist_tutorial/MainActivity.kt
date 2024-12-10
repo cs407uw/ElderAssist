@@ -1,5 +1,6 @@
 package com.cs407.elderassist_tutorial
 
+import com.cs407.elderassist_tutorial.R
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
@@ -8,11 +9,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var adapter1: VideoAdapter
@@ -89,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
-        val backButton = findViewById<Button>(R.id.backButton)
+        val backButton = findViewById<ImageView>(R.id.backButton)
         backButton.setOnClickListener {
             finish()
         }

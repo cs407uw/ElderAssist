@@ -41,14 +41,17 @@
                 android:gravity="center"
                 android:layout_marginEnd="16dp">
 
-                <Button
+                <ImageView
                     android:id="@+id/backButton"
-                    android:layout_width="77dp"
-                    android:layout_height="wrap_content"
-                    android:backgroundTint="#DC9FB4"
-                    android:text="&lt;"
-                    android:textColor="#FFFFFF"
-                    android:textSize="18sp" />
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/arrow_back"
+                    android:contentDescription="@string/back_button_label"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="40dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
 
             </LinearLayout>
 

@@ -33,14 +33,17 @@
             android:orientation="horizontal"
             android:paddingBottom="16dp">
 
-            <Button
+            <ImageView
                 android:id="@+id/backButton"
-                android:layout_width="77dp"
-                android:layout_height="wrap_content"
-                android:backgroundTint="#DC9FB4"
-                android:text="&lt;"
-                android:textColor="#FFFFFF"
-                android:textSize="18sp" />
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@drawable/arrow_back"
+                android:contentDescription="@string/back_button_label"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="40dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
         </LinearLayout>
 
         <!-- CardView containing the map -->
@@ -77,7 +80,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Enter medicine name"
-                    android:backgroundTint="#DC9FB4"
                     android:padding="8dp"
                     android:textColor="#000000"
                     android:textColorHint="#555555"
@@ -88,7 +90,6 @@
                     android:id="@+id/searchPharmacyButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="#DC9FB4"
                     android:text="Search"
                     android:textColor="#FFFFFF" />
             </LinearLayout>
@@ -116,7 +117,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nearby Pharmacies"
-                    android:backgroundTint="#DC9FB4"
                     android:textColor="#FFFFFF"
                     android:layout_marginEnd="16dp"/>
 
@@ -125,7 +125,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Save Location"
-                    android:backgroundTint="#DC9FB4"
                     android:textColor="#FFFFFF" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -151,7 +150,6 @@
                 android:id="@+id/showSavedLocationsButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:backgroundTint="#DC9FB4"
                 android:text="Show Saved Locations"
                 android:textColor="#FFFFFF" />
         </LinearLayout>

@@ -6,14 +6,24 @@
     android:background="#E6E6FA"
     tools:context=".CameraScan">
 
-    <Button
+<!--    <Button-->
+<!--        android:id="@+id/backButton"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="40dp"-->
+<!--        android:text="Back"-->
+<!--        android:backgroundTint="#DC9FB4"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
+    <ImageView
         android:id="@+id/backButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:src="@drawable/arrow_back"
+        android:contentDescription="@string/back_button_label"
         android:layout_marginStart="16dp"
         android:layout_marginTop="40dp"
-        android:text="Back"
-        android:backgroundTint="#DC9FB4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -53,33 +63,28 @@
         android:layout_margin="16dp"
         android:text="Camera"
         android:onClick="launchCamera"
-        android:backgroundTint="#DC9FB4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/copyTextButton"
         app:layout_constraintStart_toStartOf="parent"
          />
 
-    <!-- Copy Text Button -->
     <Button
         android:id="@+id/copyTextButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="Copy Text"
-        android:backgroundTint="#DC9FB4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/searchInMapButton"
         app:layout_constraintStart_toEndOf="@id/cameraButton"
          />
 
-    <!-- Search in Map Button -->
     <Button
         android:id="@+id/searchInMapButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:text="Search in Map"
-        android:backgroundTint="#DC9FB4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/copyTextButton"

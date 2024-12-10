@@ -31,9 +31,10 @@ import com.google.mlkit.vision.label.ImageLabeling
 import com.google.mlkit.vision.label.defaults.ImageLabelerOptions
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import java.io.File
 import java.io.BufferedReader
+import java.io.File
 import java.io.InputStreamReader
+
 
 class CameraScan : AppCompatActivity() {
     private lateinit var imageHolder: ImageView
@@ -82,7 +83,7 @@ class CameraScan : AppCompatActivity() {
         imageHolder = findViewById(R.id.imageHolder)
         textOutput = findViewById(R.id.textOutput)
         copyTextButton = findViewById(R.id.copyTextButton)
-        val backButton: Button = findViewById(R.id.backButton)
+        val backButton = findViewById<ImageView>(R.id.backButton)
         searchInMapButton = findViewById(R.id.searchInMapButton)
 
         copyTextButton.setOnClickListener { copyTextToClipboard() }

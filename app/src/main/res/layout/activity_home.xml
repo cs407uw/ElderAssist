@@ -163,10 +163,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_margin="5dp"
+            android:backgroundTint="#98A6DF"
             android:text="Tap here to play a small game!"
-            android:textSize="12sp"
-            android:backgroundTint="#DC9FB4"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
 
         <!-- Welcome Section -->
         <androidx.cardview.widget.CardView
