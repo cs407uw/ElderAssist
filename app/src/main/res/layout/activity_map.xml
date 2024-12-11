@@ -1,19 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E6E6FA"
-    android:fillViewport="true">
+    android:background="#E6E6FA">
 
+    <!-- Top bar with Back Arrow and Title -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/topBar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Title -->
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/arrow_back"
+            android:contentDescription="@string/back_button_label"
+            android:padding="8dp" />
+
         <TextView
             android:id="@+id/appTitleMap"
             android:layout_width="wrap_content"
@@ -22,130 +35,124 @@
             android:textColor="#000000"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:paddingBottom="16dp"/>
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
 
-        <!-- Back Button Row -->
+    <!-- Map Card (Increased height to make map bigger) -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/mapCard"
+        android:layout_width="0dp"
+        android:layout_height="600dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/topBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp">
+
+        <fragment
+            android:id="@+id/mapFragment"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.cardview.widget.CardView>
+
+    <!-- Search + Save card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/searchSaveCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/mapCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="start"
-            android:orientation="horizontal"
-            android:paddingBottom="16dp">
+            android:orientation="vertical">
 
-            <ImageView
-                android:id="@+id/backButton"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/arrow_back"
-                android:contentDescription="@string/back_button_label"
+            <EditText
+                android:id="@+id/searchInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Enter medicine name"
                 android:padding="8dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"/>
-        </LinearLayout>
+                android:textColor="#000000"
+                android:textColorHint="#555555"
+                android:layout_marginBottom="8dp"/>
 
-        <!-- Map Card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="500dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:layout_marginBottom="16dp">
-
-            <fragment
-                android:id="@+id/mapFragment"
-                android:name="com.google.android.gms.maps.SupportMapFragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </androidx.cardview.widget.CardView>
-
-        <!-- Search + Save card -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp">
-
+            <!-- Icons row: search & save -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <EditText
-                    android:id="@+id/searchInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Enter medicine name"
+                <ImageView
+                    android:id="@+id/searchPharmacyButton"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/search_icon"
+                    android:contentDescription="@string/search"
+                    android:background="@drawable/circle_light_blue"
+                    android:layout_marginStart="70dp"
+                    android:padding="8dp" />
+
+                <ImageView
+                    android:id="@+id/saveLocationButton"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:src="@drawable/save_location_icon"
+                    android:contentDescription="@string/save_button"
+                    android:background="@drawable/circle_light_blue"
                     android:padding="8dp"
-                    android:textColor="#000000"
-                    android:textColorHint="#555555"
-                    android:layout_marginBottom="8dp"/>
-
-                <!-- 图标行：search & save -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <!-- Search icon -->
-                    <ImageView
-                        android:id="@+id/searchPharmacyButton"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/search_icon"
-                        android:contentDescription="@string/search"
-                        android:background="@drawable/circle_light_blue"
-                        android:padding="8dp"
-                        android:layout_marginStart="70dp"/>
-
-                    <!-- Save location icon -->
-                    <ImageView
-                        android:id="@+id/saveLocationButton"
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:src="@drawable/save_location_icon"
-                        android:contentDescription="@string/save_button"
-                        android:background="@drawable/circle_light_blue"
-                        android:padding="8dp"
-                        android:layout_marginStart="100dp"/>
-                </LinearLayout>
+                    android:layout_marginStart="120dp"/>
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-        <!-- Nearby Pharmacies + Saved Locations Card -->
-        <androidx.cardview.widget.CardView
+    <!-- Nearby Pharmacies + Saved Locations Card -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/nearbySavedCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:layout_constraintTop_toBottomOf="@id/searchSaveCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="16dp">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp">
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/nearbyPharmaciesButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:layout_marginBottom="8dp">
+                android:text="@string/nearby_pharmacies"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                android:layout_marginEnd="16dp"/>
 
-                <Button
-                    android:id="@+id/nearbyPharmaciesButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nearby_pharmacies"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:textColor="@android:color/white"
-                    android:layout_marginEnd="16dp"/>
+            <Button
+                android:id="@+id/showSavedLocationsButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/saved_locations"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
-                <Button
-                    android:id="@+id/showSavedLocationsButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/saved_locations"
-                    android:backgroundTint="@color/colorPrimary"
-                    android:textColor="@android:color/white" />
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-    </LinearLayout>
-</ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
