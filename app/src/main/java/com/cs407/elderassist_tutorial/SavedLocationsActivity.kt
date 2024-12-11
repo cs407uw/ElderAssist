@@ -2,6 +2,7 @@ package com.cs407.elderassist_tutorial
 
 import android.app.AlertDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import com.cs407.elderassist_tutorial.data.Medication
 import com.cs407.elderassist_tutorial.utils.CSVimport
@@ -38,8 +40,12 @@ class SavedLocationsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_saved_locations)
 
-        val backButton = findViewById<Button>(R.id.backButton)
-        backButton.setOnClickListener { finish() }
+        val backButton = findViewById<ImageView>(R.id.backButton)
+        backButton.setOnClickListener {
+            val intent = Intent(this, MapActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         val recyclerView = findViewById<RecyclerView>(R.id.savedLocationsRecyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -99,7 +105,11 @@ class SavedLocationsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val medication = medicationDao.getMedicationByName(medicineName)
             if (medication == null) {
-                Toast.makeText(this@SavedLocationsActivity, "Medicine not found in DB", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@SavedLocationsActivity,
+                    "Medicine not found in DB",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@launch
             }
 
@@ -118,7 +128,11 @@ class SavedLocationsActivity : AppCompatActivity() {
         lifecycleScope.launch {
             val notes = noteDao.getNotesForLocation(locationItem.location.id)
             if (notes.isEmpty()) {
-                Toast.makeText(this@SavedLocationsActivity, "No notes for this location", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this@SavedLocationsActivity,
+                    "No notes for this location",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@launch
             }
             val notesStrings = notes.map { n ->
