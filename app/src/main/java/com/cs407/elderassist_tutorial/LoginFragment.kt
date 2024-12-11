@@ -1,6 +1,7 @@
 package com.cs407.elderassist_tutorial
 
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -80,6 +81,9 @@ class LoginFragment(
 
             // 如果希望关闭当前 LoginActivity 页面，防止返回堆栈中残留：
             requireActivity().finish()
+            // 调用 CustomDialogFragment
+//            val dialogFragment = CustomDialogFragment()
+//            dialogFragment.show(parentFragmentManager, "CustomDialog")
         }
 
         // Set the login button click action
@@ -101,6 +105,10 @@ class LoginFragment(
 
                     if (user!=null&& validatePassword(password, user.passwd)) {
                         Log.d("LoginFragment", "Login successful for user: $username")
+                        val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.putBoolean("IS_LOGGED_IN", true) // 设置为已登录
+                        editor.apply()
                         userViewModel.setUser(UserState(user.userId, username, password, user.randomInfo))
                         findNavController().navigate(R.id.action_loginFragment_to_noteListFragment)
                     } else {

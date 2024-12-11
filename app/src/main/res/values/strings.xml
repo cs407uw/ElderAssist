@@ -42,14 +42,17 @@
     <string name="save_button">Save</string>
     <string name="logout">Log Out</string>
     <string name="delete_account">Delete Account</string>
-    <string name="greeting_text">Welcome %1$s!</string>
-    <string name="welcome">welcome back</string>
+    <string name="greeting_text">Hey, %1$s!</string>
+    <string name="age_text">Age: %1$d</string>
+    <string name="loc_text">Location: %1$s</string>
+    <string name="oth_text">%1$s</string>
+    <string name="welcome">Welcome Back</string>
     <string name="elder_a">ElderAssist</string>
-    <string name="create_account">New to ElderAssist? Create your account</string>
+    <string name="create_account">New to ElderAssist? Create your account from below.</string>
     <string name="image_description">logo</string>
     <string name="signup">Sign Up</string>
     <string name="createtext">Create Your Account Here</string>
-    <string name="link">here</string>
+    <string name="link">Create account</string>
     <string name="edit_user_info_screen">edit user info screen</string>
     <string name="map_button_desc">Navigate to Map</string>
 

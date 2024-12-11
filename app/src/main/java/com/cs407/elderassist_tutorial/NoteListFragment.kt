@@ -19,18 +19,20 @@ import kotlinx.coroutines.withContext
 import android.util.Log
 import android.widget.Button
 import com.cs407.elderassist_tutorial.utils.parseUserInfo
+import android.widget.ImageView
+import android.widget.LinearLayout
+import androidx.core.content.ContextCompat
 
 class NoteListFragment(
     private val injectedUserViewModel: UserViewModel? = null
 ) : Fragment() {
 
     private lateinit var greetingTextView: TextView
-
+    private lateinit var ageTextView: TextView
+    private lateinit var locTextView: TextView
     private lateinit var userViewModel: UserViewModel
-    private lateinit var backToHomeButton: Button
+    private lateinit var backToHomeButton: ImageView
     private lateinit var noteDB: NoteDatabase
-
-    private lateinit var userInfoTextView: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +44,7 @@ class NoteListFragment(
         }
 
         val userState = userViewModel.userState.value
+        Log.d("homeFragment", "id: ${userState}")
         Log.d("NoteListFragment", "id: ${userState?.id}")
         Log.d("NoteListFragment", "userName: ${userState?.name}")
         Log.d("NoteListFragment", "passwd: ${userState?.passwd}")
@@ -54,7 +57,8 @@ class NoteListFragment(
     ): View {
         val view = inflater.inflate(R.layout.fragment_note_list, container, false)
         greetingTextView = view.findViewById(R.id.greetingTextView)
-        userInfoTextView = view.findViewById(R.id.userInfoTextView)
+        ageTextView = view.findViewById(R.id.ageTextView)
+        locTextView = view.findViewById(R.id.locTextView)
         return view
     }
 
@@ -69,15 +73,28 @@ class NoteListFragment(
         // 设置按钮点击事件
         logoutButton.setOnClickListener {
             // Log Out 的逻辑
+            val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putBoolean("IS_LOGGED_IN", false) // 更新为未登录状态
+            editor.apply()
             userViewModel.setUser(UserState())
             findNavController().navigate(R.id.action_noteListFragment_to_loginFragment)
         }
 
         // 初始化按钮
-        backToHomeButton = view.findViewById(R.id.backToHomeButton)
+        backToHomeButton = view.findViewById<ImageView>(R.id.backToHomeImage)
 
         // 设置点击事件
         backToHomeButton.setOnClickListener {
+            val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            val userState = userViewModel.userState.value
+            editor.putString("NAME", userState.name)
+            editor.putString("PASSWORD", userState.passwd)
+            editor.putString("ID", userState.id.toString())
+            editor.putString("INFO", userState.randomInfo)
+            editor.putBoolean("IS_LOGGED_IN", true) // 更新为登录状态
+            editor.apply()
             val intent = Intent(requireContext(), HomeActivity::class.java)
             startActivity(intent)
 
@@ -96,26 +113,51 @@ class NoteListFragment(
 
         // 设置欢迎文本
         val userState = userViewModel.userState.value
-        greetingTextView.text = getString(R.string.greeting_text, userState.name)
 
         // 显示用户信息
         val randomInfo = userState?.randomInfo
         if (!randomInfo.isNullOrEmpty()) {
             val userInfo = parseUserInfo(randomInfo) // 解析 JSON 信息
-            userInfoTextView.text = """
-            User Info:
-            Username: ${userInfo.username}
-            Age: ${userInfo.age}
-            Location: ${userInfo.location}
-            Preferences: ${userInfo.preferences.joinToString(", ")}
-        """.trimIndent()
-        } else {
-            userInfoTextView.text = "No user info available."
+            val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+            val editor = sharedPreferences.edit()
+            editor.putString("NAME", userState.name)
+            editor.putString("PASSWORD", userState.passwd)
+            editor.putString("ID", userState.id.toString())
+            editor.putString("INFO", userState.randomInfo)
+            editor.putBoolean("IS_LOGGED_IN", true) // 更新为未登录状态
+            editor.apply()
+            Log.d("NoteList", "id: ${userState?.id}")
+            Log.d("NoteList", "userName: ${userState?.name}")
+            Log.d("NoteList", "passwd: ${userState?.passwd}")
+            Log.d("NoteList", "randomInfo: ${userState?.randomInfo}")
+            greetingTextView.text = getString(R.string.greeting_text, userInfo.username)
+            ageTextView.text = getString(R.string.age_text, userInfo.age)
+            locTextView.text = getString(R.string.loc_text, userInfo.location)
+            lifecycleScope.launch {
+                val userState = userViewModel.userState.value
+                val preferences = userState?.randomInfo?.let { parseUserInfo(it).preferences } ?: emptyList()
+
+                // 根据用户 preferences 筛选分类数据
+                val (medicines, pharmacies, others) = withContext(Dispatchers.IO) {
+                    filterPreferences(preferences)
+                }
+
+                // 显示分类数据
+                displayItems(medicines, R.id.med, "medicine")
+                displayItems(pharmacies, R.id.ph, "pharmacy")
+                displayItems(others, R.id.oth, "other")
+            }
         }
+
+
     }
 
     private fun deleteAccountAndLogout() {
         val userId = userViewModel.userState.value?.id ?: return
+        val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+        val editor = sharedPreferences.edit()
+        editor.clear() // 更新为未登录状态
+        editor.apply()
         lifecycleScope.launch {
             withContext(Dispatchers.IO) {
                 try {
@@ -131,5 +173,74 @@ class NoteListFragment(
                 }
             }
         }
+    }
+
+    // 数据筛选逻辑
+    private suspend fun filterPreferences(preferences: List<String>): Triple<List<String>, List<String>, List<String>> {
+        val medicationDao = noteDB.medicationDao()
+        val pharmacyDao = noteDB.pharmacyDao()
+
+        val medicines = mutableListOf<String>()
+        val pharmacies = mutableListOf<String>()
+        val others = mutableListOf<String>()
+
+        for (preference in preferences) {
+            val isMedicine = medicationDao.getMedicationByName(preference) != null
+            val isPharmacy = pharmacyDao.getPharmacyByName(preference) != null
+
+            when {
+                isMedicine -> medicines.add(preference)
+                isPharmacy -> pharmacies.add(preference)
+                else -> others.add(preference)
+            }
+        }
+
+        return Triple(medicines, pharmacies, others)
+    }
+
+    // 分类数据显示
+    private fun displayItems(items: List<String>, containerId: Int, type: String) {
+        val container = view?.findViewById<ViewGroup>(containerId)
+        container?.removeAllViews()
+
+        items.chunked(3).forEach { rowItems ->
+            val row = LinearLayout(requireContext())
+            row.orientation = LinearLayout.HORIZONTAL
+
+            rowItems.forEach { item ->
+                val textView = TextView(requireContext()).apply {
+                    text = item
+                    setPadding(16, 16, 16, 16)
+                    // 设置字体颜色
+                    setTextColor(
+                        when (type) {
+                            "medicine", "pharmacy" -> ContextCompat.getColor(requireContext(), android.R.color.holo_blue_dark)
+                            else -> ContextCompat.getColor(requireContext(), android.R.color.black)
+                        }
+                    )
+
+                    setOnClickListener {
+                        val sharedPreferences = requireContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
+                        val editor = sharedPreferences.edit()
+                        editor.putBoolean("IS_LOGGED_IN", true) // 更新为未登录状态
+                        editor.apply()
+                        navigateToMap(item.trim(), type.trim())
+                        Log.d("Preference",item.trim())
+                        Log.d("Preference",type.trim())
+                    }
+                }
+                row.addView(textView)
+            }
+
+            container?.addView(row)
+        }
+    }
+
+    // 跳转到 MapActivity
+    private fun navigateToMap(name: String, type: String) {
+        val intent = Intent(requireContext(), MapActivity::class.java)
+        intent.putExtra("SEARCH_TYPE", type)
+        intent.putExtra("SEARCH_NAME", name)
+        startActivity(intent)
     }
 }

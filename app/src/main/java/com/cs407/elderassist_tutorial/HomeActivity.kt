@@ -3,10 +3,15 @@ package com.cs407.elderassist_tutorial
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.cs407.elderassist_tutorial.data.WeatherResponse
 import com.cs407.elderassist_tutorial.data.WeatherService
@@ -19,9 +24,11 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.InputStreamReader
 
+
 class HomeActivity : AppCompatActivity() {
 
     private lateinit var weatherTextView: TextView
+    private lateinit var userViewModel: UserViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +36,9 @@ class HomeActivity : AppCompatActivity() {
 
         // Initialize Weather TextView
         weatherTextView = findViewById(R.id.weatherTextView)
+
+        //  UserViewModel
+        userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
 
         // Set up button navigation
         setupButtonNavigation()
@@ -38,7 +48,12 @@ class HomeActivity : AppCompatActivity() {
 
         // Import CSV data
         importCSVData()
+
+        //initialize
+        initializeUserViewModel()
+
     }
+
 
 
     private fun setupButtonNavigation() {
@@ -68,7 +83,8 @@ class HomeActivity : AppCompatActivity() {
         }
 
         meButton.setOnClickListener {
-            navigateToActivity(LoginMainActivity::class.java)
+            //navigateToActivity(LoginMainActivity::class.java)
+            handleMeButtonClick()
         }
 
         playTetrisButton.setOnClickListener {
@@ -80,6 +96,61 @@ class HomeActivity : AppCompatActivity() {
         val intent = Intent(this, activity)
         startActivity(intent)
     }
+
+    private fun handleMeButtonClick() {
+        val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+        val isLoggedIn = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+
+        if (isLoggedIn) {
+            val userState = userViewModel.userState.value
+            Log.d("homeFragment", "user: ${userState}")
+            if (userState == null || userState.name.isEmpty()) {
+                // 尝试从 SharedPreferences 加载数据
+                val username = sharedPreferences.getString("NAME", null)
+                val userId = sharedPreferences.getString("ID", null)
+                val password = sharedPreferences.getString("PASSWORD", null)
+                val info = sharedPreferences.getString("INFO", null)
+                Log.d("homeFragment", "id: ${username}")
+                Log.d("homeFragment", "userName: ${userId}")
+                Log.d("homeFragment", "passwd: ${password}")
+                Log.d("homeFragment", "randomInfo: ${info}")
+                if (username != null && userId != null) {
+                    userViewModel.setUser(UserState(userId.toInt(), username, password ?: "", info ?: ""))
+                } else {
+                    Toast.makeText(this, "Failed to restore user state", Toast.LENGTH_SHORT).show()
+                    return
+                }
+            }
+            // 跳转到 NoteListFragment
+            val intent = Intent(this, LoginMainActivity::class.java)
+            startActivity(intent)
+        } else {
+            val intent = Intent(this, LoginMainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
+    }
+
+
+    private fun initializeUserViewModel() {
+        if (!::userViewModel.isInitialized) { // 确保只初始化一次
+            userViewModel = ViewModelProvider(this).get(UserViewModel::class.java)
+            val sharedPreferences = getSharedPreferences("UserPrefs", MODE_PRIVATE)
+            val isLoggedIn = sharedPreferences.getBoolean("IS_LOGGED_IN", false)
+            val userName = sharedPreferences.getString("NAME", null)
+            val userId = sharedPreferences.getString("ID", null)
+            val password = sharedPreferences.getString("PASSWORD", null)
+            val randomInfo = sharedPreferences.getString("INFO", null)
+
+            if (isLoggedIn && userName != null && userId != null) {
+                userViewModel.setUser(UserState(userId.toInt(), userName, password ?: "", randomInfo?:""))
+            } else {
+                userViewModel.setUser(UserState()) // 设置默认空状态
+            }
+        }
+    }
+
+
 
     // Import CSV Data
     private fun importCSVData() {
@@ -97,7 +168,6 @@ class HomeActivity : AppCompatActivity() {
                 val csvReaderPharmacyMedication = CSVReader(InputStreamReader(inputStreamPharmacyMedication))
                 CSVimport.linkPharmacyAndMedications(csvReaderPharmacyMedication, applicationContext)
 
-                Log.d("CSVImporter", "CSV import success")
                 logDatabaseInfo()
             } catch (e: Exception) {
                 Log.e("CSVImporter", "CSV error: ${e.message}")
