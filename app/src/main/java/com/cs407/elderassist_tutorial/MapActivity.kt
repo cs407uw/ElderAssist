@@ -13,15 +13,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.cs407.elderassist_tutorial.data.NoteDatabase
 import com.cs407.elderassist_tutorial.data.SavedLocation
-import com.cs407.elderassist_tutorial.data.Medication
-import com.cs407.elderassist_tutorial.data.Pharmacy
 import com.cs407.elderassist_tutorial.utils.CSVimport
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
@@ -34,7 +31,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.io.InputStreamReader
-import java.net.URLEncoder
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -48,7 +44,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val database by lazy { NoteDatabase.getDatabase(this) }
     private val savedLocationDao by lazy { database.savedLocationDao() }
 
-    // Store destination for navigation
+    // Store destination for navigation if needed (not used here since we removed the prompt)
     private var currentDestination: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,15 +65,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
                 Log.d("CSVImport", "Pharmacy data imported successfully")
 
-                //userinfo
+                // If there's any userinfo from intent
                 val searchType = intent.getStringExtra("SEARCH_TYPE")
                 val searchName = intent.getStringExtra("SEARCH_NAME")
                 val searchInput = findViewById<EditText>(R.id.searchInput)
 
                 if (!searchName.isNullOrEmpty()) {
                     try {
-                        // 原有逻辑...
-                        Log.d("Map",searchName)
                         searchInput.setText(searchName)
                         when (searchType) {
                             "medicine" -> searchPharmaciesWithMedicine(searchInput.text.toString().trim())
@@ -291,147 +285,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                         .snippet("Address: ${closestPharmacy.address}")
                 )
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closestLatLng, 15f))
-
-                // Ask user if they want navigation
-                AlertDialog.Builder(this@MapActivity)
-                    .setTitle("Navigation")
-                    .setMessage("Do you want to navigate to ${closestPharmacy.pharmacyName}?")
-                    .setPositiveButton("Yes") { _, _ ->
-                        startNavigation(mode = "driving")
-                    }
-                    .setNegativeButton("No", null)
-                    .show()
+                // Removed the AlertDialog navigation prompt
+                // Now it just shows the closest pharmacy.
             } else {
                 Toast.makeText(this@MapActivity, "No pharmacies found nearby", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun startNavigation(mode: String = "driving") {
-        val origin = userLocation
-        val dest = currentDestination
-        if (origin == null || dest == null) {
-            Toast.makeText(this, "Origin or destination not set", Toast.LENGTH_SHORT).show()
-            return
-        }
-        fetchRouteAndDisplay(origin, dest, mode)
-    }
-
-    private suspend fun getDirectionsJson(origin: LatLng, destination: LatLng, mode: String): String? {
-        val apiKey = "AIzaSyAGQLEb1tJGrm76jo-_wK3Lep73ZiI4r78"
-        val url = "https://maps.googleapis.com/maps/api/directions/json?" +
-                "origin=${origin.latitude},${origin.longitude}&" +
-                "destination=${destination.latitude},${destination.longitude}&" +
-                "mode=$mode&key=$apiKey"
-
-        val client = okhttp3.OkHttpClient()
-        val request = okhttp3.Request.Builder().url(url).build()
-
-        return withContext(Dispatchers.IO) {
-            val response = client.newCall(request).execute()
-            if (response.isSuccessful) response.body?.string() else null
-        }
-    }
-
-    data class RouteInfo(
-        val polylinePoints: List<LatLng>,
-        val distanceText: String,
-        val durationText: String
-    )
-
-    private fun parseDirectionsJson(json: String): RouteInfo? {
-        val jsonObj = JSONObject(json)
-        val routes = jsonObj.getJSONArray("routes")
-        if (routes.length() == 0) return null
-
-        val route = routes.getJSONObject(0)
-        val legs = route.getJSONArray("legs")
-        val leg = legs.getJSONObject(0)
-
-        val distanceText = leg.getJSONObject("distance").getString("text")
-        val durationText = leg.getJSONObject("duration").getString("text")
-
-        val polylineObj = route.getJSONObject("overview_polyline")
-        val encodedPoints = polylineObj.getString("points")
-        val decodedPoints = decodePolyline(encodedPoints)
-
-        return RouteInfo(decodedPoints, distanceText, durationText)
-    }
-
-    private fun decodePolyline(encoded: String): List<LatLng> {
-        val poly = ArrayList<LatLng>()
-        var index = 0
-        val len = encoded.length
-        var lat = 0
-        var lng = 0
-
-        while (index < len) {
-            var b: Int
-            var shift = 0
-            var result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or ((b and 0x1f) shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlat = if ((result and 1) != 0) (result shr 1).inv() else (result shr 1)
-            lat += dlat
-
-            shift = 0
-            result = 0
-            do {
-                b = encoded[index++].code - 63
-                result = result or ((b and 0x1f) shl shift)
-                shift += 5
-            } while (b >= 0x20)
-            val dlng = if ((result and 1) != 0) (result shr 1).inv() else (result shr 1)
-            lng += dlng
-
-            val latLng = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
-            poly.add(latLng)
-        }
-        return poly
-    }
-
-    private fun showRouteOnMap(route: RouteInfo) {
-        mMap.clear()
-        userLocation?.let { mMap.addMarker(MarkerOptions().position(it).title("Your Location")) }
-        currentDestination?.let { mMap.addMarker(MarkerOptions().position(it).title("Destination")) }
-
-        val polylineOptions = PolylineOptions()
-            .color(android.graphics.Color.BLUE)
-            .width(10f)
-            .addAll(route.polylinePoints)
-        mMap.addPolyline(polylineOptions)
-
-        val builder = LatLngBounds.Builder()
-        route.polylinePoints.forEach { builder.include(it) }
-        val bounds = builder.build()
-        val padding = 100
-        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
-
-        Toast.makeText(
-            this,
-            "Distance: ${route.distanceText}, Duration: ${route.durationText}",
-            Toast.LENGTH_LONG
-        ).show()
-    }
-
-    private fun fetchRouteAndDisplay(origin: LatLng, destination: LatLng, mode: String) {
-        lifecycleScope.launch {
-            val json = getDirectionsJson(origin, destination, mode)
-            if (json != null) {
-                val routeInfo = parseDirectionsJson(json)
-                if (routeInfo != null) {
-                    showRouteOnMap(routeInfo)
-                } else {
-                    Toast.makeText(this@MapActivity, "Failed to parse route", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this@MapActivity, "Failed to fetch directions", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+    // Additional functions for route fetching and parsing if you still need them for other functionalities
+    // (Not triggered automatically from this code since we removed the dialog)
+    // You can have another button or menu option to start navigation.
 
     private fun getLatLngFromAddress(address: String): LatLng {
         return try {
@@ -451,7 +315,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showSavedLocationsPanel() {
-        // You can add logic here to show saved locations in another activity or dialog
         val showSavedLocationsButton = findViewById<Button>(R.id.showSavedLocationsButton)
         showSavedLocationsButton.setOnClickListener {
             val intent = Intent(this, SavedLocationsActivity::class.java)
@@ -476,14 +339,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 
-
     //userinfo
     private fun searchPharmacyByName(pharmacyName: String) {
         val database = NoteDatabase.getDatabase(this)
         val pharmacyDao = database.pharmacyDao()
 
         lifecycleScope.launch {
-            // 获取单个或多个 Pharmacy
             val pharmacies = withContext(Dispatchers.IO) {
                 listOfNotNull(pharmacyDao.getPharmacyByName(pharmacyName))
             }
@@ -493,10 +354,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 return@launch
             }
 
-            // 清空地图标记
             mMap.clear()
 
-            // 遍历每个药店，添加标记
             pharmacies.forEach { pharmacy ->
                 val pharmacyLatLng = getLatLngFromAddress(pharmacy.address ?: "")
                 if (pharmacyLatLng.latitude != 0.0 && pharmacyLatLng.longitude != 0.0) {
@@ -511,7 +370,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             }
 
-            // 找到最近的药店
             val userLatLng = userLocation ?: LatLng(0.0, 0.0)
             val closestPharmacy = pharmacies.minByOrNull { pharmacy ->
                 val pharmacyLatLng = getLatLngFromAddress(pharmacy.address ?: "")
@@ -521,10 +379,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     pharmacyLatLng.latitude, pharmacyLatLng.longitude,
                     results
                 )
-                results[0] // 返回距离值
+                results[0]
             }
 
-            // 将相机移动到最近药店
             closestPharmacy?.let { pharmacy ->
                 val closestLatLng = getLatLngFromAddress(pharmacy.address ?: "")
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closestLatLng, 15f))
@@ -532,4 +389,3 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         }
     }
 }
-
