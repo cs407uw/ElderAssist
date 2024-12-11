@@ -20,17 +20,23 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.cs407.elderassist_tutorial.data.NoteDatabase
 import com.cs407.elderassist_tutorial.data.SavedLocation
+import com.cs407.elderassist_tutorial.data.Medication
+import com.cs407.elderassist_tutorial.data.Pharmacy
 import com.cs407.elderassist_tutorial.utils.CSVimport
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.opencsv.CSVReader
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONObject
 import java.io.InputStreamReader
+import java.net.URLEncoder
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -41,6 +47,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private var userLocation: LatLng? = null
     private val database by lazy { NoteDatabase.getDatabase(this) }
     private val savedLocationDao by lazy { database.savedLocationDao() }
+
+    // Store destination for navigation
+    private var currentDestination: LatLng? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,22 +91,18 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
 
-        // Nearby Pharmacies Button
         val nearbyButton = findViewById<Button>(R.id.nearbyPharmaciesButton)
         nearbyButton.setOnClickListener {
             showNearbyPharmacies()
         }
 
-
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         requestLocationPermission()
 
-        // Map Fragment Initialization
         val mapFragment =
             supportFragmentManager.findFragmentById(R.id.mapFragment) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // Save Location Button
         val saveButton = findViewById<ImageView>(R.id.saveLocationButton)
         saveButton.setOnClickListener {
             selectedLocation?.let {
@@ -105,7 +110,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             } ?: Toast.makeText(this, "No location selected", Toast.LENGTH_SHORT).show()
         }
 
-        // Show Saved Locations Button
         val showSavedLocationsButton = findViewById<Button>(R.id.showSavedLocationsButton)
         showSavedLocationsButton.setOnClickListener {
             showSavedLocationsPanel()
@@ -127,14 +131,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun fetchUserLocation() {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return
         }
 
@@ -147,13 +145,10 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                     userLocation = LatLng(location.latitude, location.longitude)
                     mMap.moveCamera(
                         CameraUpdateFactory.newLatLngZoom(
-                            userLocation ?: LatLng(
-                                0.0,
-                                0.0
-                            ), 15f
+                            userLocation ?: LatLng(0.0, 0.0), 15f
                         )
                     )
-                    locationManager.removeUpdates(this) // Stop listening after fetching location
+                    locationManager.removeUpdates(this)
                 }
 
                 override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
@@ -177,20 +172,17 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             )
         }
 
-        // Map Click Listener
+        // Map click to set selected location
         mMap.setOnMapClickListener { latLng ->
             mMap.clear()
             mMap.addMarker(MarkerOptions().position(latLng).title("Selected Location"))
             selectedLocation = latLng
         }
-
     }
 
     private fun checkAndRequestPermissions() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            != PackageManager.PERMISSION_GRANTED
         ) {
             ActivityCompat.requestPermissions(
                 this,
@@ -201,7 +193,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun showNearbyPharmacies() {
-        val database = NoteDatabase.getDatabase(this)
         val pharmacyDao = database.pharmacyDao()
 
         lifecycleScope.launch {
@@ -216,12 +207,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 return@launch
             }
 
-            mMap.clear() // Clear previous markers
-
-            // You can also check count if needed
-            // val count = pharmacyDao.countPharmacies()
-            // Log.d("DatabaseDebug", "Pharmacy table row count: $count")
-
+            mMap.clear()
             pharmacies.forEach { pharmacy ->
                 val latLng = getLatLngFromAddress(pharmacy.address)
                 if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
@@ -231,23 +217,16 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                             .title(pharmacy.pharmacyName)
                             .snippet("Hours: ${pharmacy.operatingHours ?: "Unknown"}")
                     )
-                } else {
-                    Log.e(
-                        "MapActivity",
-                        "Invalid coordinates for pharmacy: ${pharmacy.pharmacyName}"
-                    )
                 }
             }
 
             val firstLatLng = pharmacies.firstOrNull()?.let { getLatLngFromAddress(it.address) }
             val centerLatLng = firstLatLng ?: userLocation ?: LatLng(0.0, 0.0)
-
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(centerLatLng, 12f))
         }
     }
 
     private fun searchPharmaciesWithMedicine(medicineName: String) {
-        val database = NoteDatabase.getDatabase(this)
         val pharmacyMedicationDao = database.pharmacyMedicationDao()
         val medicationDao = database.medicationDao()
 
@@ -258,8 +237,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 return@launch
             }
 
-            val pharmacies =
-                pharmacyMedicationDao.getPharmaciesByMedication(medication.medicationId)
+            val pharmacies = pharmacyMedicationDao.getPharmaciesByMedication(medication.medicationId)
             if (pharmacies.isEmpty()) {
                 Toast.makeText(
                     this@MapActivity,
@@ -283,6 +261,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
             if (closestPharmacy != null) {
                 val closestLatLng = getLatLngFromAddress(closestPharmacy.address)
+                currentDestination = closestLatLng
                 mMap.clear()
                 mMap.addMarker(
                     MarkerOptions()
@@ -291,9 +270,144 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                         .snippet("Address: ${closestPharmacy.address}")
                 )
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closestLatLng, 15f))
-            } else {
-                Toast.makeText(this@MapActivity, "No pharmacies found nearby", Toast.LENGTH_SHORT)
+
+                // Ask user if they want navigation
+                AlertDialog.Builder(this@MapActivity)
+                    .setTitle("Navigation")
+                    .setMessage("Do you want to navigate to ${closestPharmacy.pharmacyName}?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        startNavigation(mode = "driving")
+                    }
+                    .setNegativeButton("No", null)
                     .show()
+            } else {
+                Toast.makeText(this@MapActivity, "No pharmacies found nearby", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun startNavigation(mode: String = "driving") {
+        val origin = userLocation
+        val dest = currentDestination
+        if (origin == null || dest == null) {
+            Toast.makeText(this, "Origin or destination not set", Toast.LENGTH_SHORT).show()
+            return
+        }
+        fetchRouteAndDisplay(origin, dest, mode)
+    }
+
+    private suspend fun getDirectionsJson(origin: LatLng, destination: LatLng, mode: String): String? {
+        val apiKey = "AIzaSyAGQLEb1tJGrm76jo-_wK3Lep73ZiI4r78"
+        val url = "https://maps.googleapis.com/maps/api/directions/json?" +
+                "origin=${origin.latitude},${origin.longitude}&" +
+                "destination=${destination.latitude},${destination.longitude}&" +
+                "mode=$mode&key=$apiKey"
+
+        val client = okhttp3.OkHttpClient()
+        val request = okhttp3.Request.Builder().url(url).build()
+
+        return withContext(Dispatchers.IO) {
+            val response = client.newCall(request).execute()
+            if (response.isSuccessful) response.body?.string() else null
+        }
+    }
+
+    data class RouteInfo(
+        val polylinePoints: List<LatLng>,
+        val distanceText: String,
+        val durationText: String
+    )
+
+    private fun parseDirectionsJson(json: String): RouteInfo? {
+        val jsonObj = JSONObject(json)
+        val routes = jsonObj.getJSONArray("routes")
+        if (routes.length() == 0) return null
+
+        val route = routes.getJSONObject(0)
+        val legs = route.getJSONArray("legs")
+        val leg = legs.getJSONObject(0)
+
+        val distanceText = leg.getJSONObject("distance").getString("text")
+        val durationText = leg.getJSONObject("duration").getString("text")
+
+        val polylineObj = route.getJSONObject("overview_polyline")
+        val encodedPoints = polylineObj.getString("points")
+        val decodedPoints = decodePolyline(encodedPoints)
+
+        return RouteInfo(decodedPoints, distanceText, durationText)
+    }
+
+    private fun decodePolyline(encoded: String): List<LatLng> {
+        val poly = ArrayList<LatLng>()
+        var index = 0
+        val len = encoded.length
+        var lat = 0
+        var lng = 0
+
+        while (index < len) {
+            var b: Int
+            var shift = 0
+            var result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or ((b and 0x1f) shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlat = if ((result and 1) != 0) (result shr 1).inv() else (result shr 1)
+            lat += dlat
+
+            shift = 0
+            result = 0
+            do {
+                b = encoded[index++].code - 63
+                result = result or ((b and 0x1f) shl shift)
+                shift += 5
+            } while (b >= 0x20)
+            val dlng = if ((result and 1) != 0) (result shr 1).inv() else (result shr 1)
+            lng += dlng
+
+            val latLng = LatLng(lat.toDouble() / 1E5, lng.toDouble() / 1E5)
+            poly.add(latLng)
+        }
+        return poly
+    }
+
+    private fun showRouteOnMap(route: RouteInfo) {
+        mMap.clear()
+        userLocation?.let { mMap.addMarker(MarkerOptions().position(it).title("Your Location")) }
+        currentDestination?.let { mMap.addMarker(MarkerOptions().position(it).title("Destination")) }
+
+        val polylineOptions = PolylineOptions()
+            .color(android.graphics.Color.BLUE)
+            .width(10f)
+            .addAll(route.polylinePoints)
+        mMap.addPolyline(polylineOptions)
+
+        val builder = LatLngBounds.Builder()
+        route.polylinePoints.forEach { builder.include(it) }
+        val bounds = builder.build()
+        val padding = 100
+        mMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, padding))
+
+        Toast.makeText(
+            this,
+            "Distance: ${route.distanceText}, Duration: ${route.durationText}",
+            Toast.LENGTH_LONG
+        ).show()
+    }
+
+    private fun fetchRouteAndDisplay(origin: LatLng, destination: LatLng, mode: String) {
+        lifecycleScope.launch {
+            val json = getDirectionsJson(origin, destination, mode)
+            if (json != null) {
+                val routeInfo = parseDirectionsJson(json)
+                if (routeInfo != null) {
+                    showRouteOnMap(routeInfo)
+                } else {
+                    Toast.makeText(this@MapActivity, "Failed to parse route", Toast.LENGTH_SHORT).show()
+                }
+            } else {
+                Toast.makeText(this@MapActivity, "Failed to fetch directions", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -302,11 +416,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         return try {
             val geocoder = Geocoder(this, Locale.getDefault())
             val location = geocoder.getFromLocationName(address, 1)?.firstOrNull()
-            if (location != null) {
-                LatLng(location.latitude, location.longitude)
-            } else {
-                LatLng(0.0, 0.0)
-            }
+            if (location != null) LatLng(location.latitude, location.longitude) else LatLng(0.0, 0.0)
         } catch (e: Exception) {
             LatLng(0.0, 0.0)
         }
@@ -314,17 +424,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private fun saveLocation(location: LatLng) {
         lifecycleScope.launch {
-            savedLocationDao.insertD(
-                SavedLocation(
-                    latitude = location.latitude,
-                    longitude = location.longitude
-                )
-            )
+            savedLocationDao.insertD(SavedLocation(latitude = location.latitude, longitude = location.longitude))
             Toast.makeText(this@MapActivity, "Location saved!", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun showSavedLocationsPanel() {
+        // You can add logic here to show saved locations in another activity or dialog
         val showSavedLocationsButton = findViewById<Button>(R.id.showSavedLocationsButton)
         showSavedLocationsButton.setOnClickListener {
             val intent = Intent(this, SavedLocationsActivity::class.java)
@@ -333,17 +439,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
+                if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    == PackageManager.PERMISSION_GRANTED
                 ) {
                     mMap.isMyLocationEnabled = true
                 }
