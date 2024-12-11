@@ -38,7 +38,6 @@
                 android:layout_height="60dp"
                 android:src="@drawable/arrow_back"
                 android:contentDescription="@string/back_button_label"
-                android:background="@drawable/circle_light_blue"
                 android:padding="8dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"/>
