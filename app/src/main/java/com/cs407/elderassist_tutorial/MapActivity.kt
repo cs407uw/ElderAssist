@@ -44,6 +44,9 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     private val database by lazy { NoteDatabase.getDatabase(this) }
     private val savedLocationDao by lazy { database.savedLocationDao() }
 
+
+    private var isOriginalMarkerLoaded = false
+
     // Store destination for navigation if needed (not used here since we removed the prompt)
     private var currentDestination: LatLng? = null
 
@@ -82,6 +85,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                         Toast.makeText(this@MapActivity, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show()
                     }
                 }
+
             } catch (e: Exception) {
                 Log.e("CSVImport", "Error importing pharmacy data: ${e.message}")
             }
@@ -127,6 +131,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val showSavedLocationsButton = findViewById<Button>(R.id.showSavedLocationsButton)
         showSavedLocationsButton.setOnClickListener {
             showSavedLocationsPanel()
+        }
+        // If there's any userinfo from intent
+        val searchType = intent.getStringExtra("SEARCH_TYPE")
+        val searchName = intent.getStringExtra("SEARCH_NAME")
+
+        if (!searchName.isNullOrEmpty()) {
+            try {
+                searchInput.setText(searchName)
+                when (searchType) {
+                    "medicine" -> searchPharmaciesWithMedicine(searchInput.text.toString().trim())
+                    "pharmacy" -> searchPharmacyByName(searchInput.text.toString().trim())
+                }
+            } catch (e: Exception) {
+                Log.e("Maperror", "Error in searchPharmacyByName: ${e.message}")
+                Toast.makeText(this@MapActivity, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -185,6 +205,26 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                 LOCATION_PERMISSION_REQUEST_CODE
             )
+        }
+
+// 加载 Original Markers
+        lifecycleScope.launch {
+            val pharmacies = database.pharmacyDao().getAllPharmacies()
+            pharmacies.forEach { pharmacy ->
+                val latLng = getLatLngFromAddress(pharmacy.address)
+                if (latLng.latitude != 0.0 && latLng.longitude != 0.0) {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(latLng)
+                            .title(pharmacy.pharmacyName)
+                            .snippet("Original Marker")
+                    )
+                }
+            }
+
+            // Original Markers 加载完成，设置标志位
+            isOriginalMarkerLoaded = true
+            Log.d("MapActivity", "Original markers loaded")
         }
 
         // Map click to set selected location
@@ -246,6 +286,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val medicationDao = database.medicationDao()
 
         lifecycleScope.launch {
+            // 等待 Original Markers 加载完成
+            while (!isOriginalMarkerLoaded) {
+                Log.d("MapActivity", "Waiting for original markers to load...")
+                kotlinx.coroutines.delay(100) // 每 100ms 检查一次
+            }
+
             val medication = medicationDao.getMedicationByName(medicineName)
             if (medication == null) {
                 Toast.makeText(this@MapActivity, "Medicine not found", Toast.LENGTH_SHORT).show()
@@ -345,6 +391,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         val pharmacyDao = database.pharmacyDao()
 
         lifecycleScope.launch {
+
+            while (!isOriginalMarkerLoaded) {
+                Log.d("MapActivity", "Waiting for original markers to load...")
+                kotlinx.coroutines.delay(100) // 每 100ms 检查一次
+            }
+
             val pharmacies = withContext(Dispatchers.IO) {
                 listOfNotNull(pharmacyDao.getPharmacyByName(pharmacyName))
             }
@@ -388,4 +440,6 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
 }
+
