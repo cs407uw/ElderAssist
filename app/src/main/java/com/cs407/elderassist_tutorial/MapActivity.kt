@@ -164,6 +164,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             == PackageManager.PERMISSION_GRANTED
         ) {
             mMap.isMyLocationEnabled = true
+            fetchUserLocation() // Fetch location as soon as we know we have permission.
         } else {
             ActivityCompat.requestPermissions(
                 this,
