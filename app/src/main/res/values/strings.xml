@@ -75,6 +75,9 @@
     <string name="welcome_image" />
     <string name="map">Map</string>
     <string name="chat_name">ChatElder</string>
+
+    <string name="saved_locations">Saved Locations</string>
+    <string name="nearby_pharmacies">Nearby Pharmacies</string>FF
     />
 
 

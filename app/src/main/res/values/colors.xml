@@ -6,4 +6,6 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
     <color name="texBackgroundColor">#33000000</color>
+    <color name="light_blue">#ADD8E6</color>
+
 </resources>

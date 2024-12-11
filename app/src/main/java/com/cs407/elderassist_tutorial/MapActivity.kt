@@ -71,7 +71,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             finish()
         }
 
-        val searchButton = findViewById<Button>(R.id.searchPharmacyButton)
+        val searchButton = findViewById<ImageView>(R.id.searchPharmacyButton)
         val searchInput = findViewById<EditText>(R.id.searchInput)
         searchButton.setOnClickListener {
             val medicineName = searchInput.text.toString().trim()
@@ -88,6 +88,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             showNearbyPharmacies()
         }
 
+
         locationManager = getSystemService(LOCATION_SERVICE) as LocationManager
         requestLocationPermission()
 
@@ -97,7 +98,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
         mapFragment.getMapAsync(this)
 
         // Save Location Button
-        val saveButton = findViewById<Button>(R.id.saveLocationButton)
+        val saveButton = findViewById<ImageView>(R.id.saveLocationButton)
         saveButton.setOnClickListener {
             selectedLocation?.let {
                 saveLocation(it)

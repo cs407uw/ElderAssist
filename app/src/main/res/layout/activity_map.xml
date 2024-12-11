@@ -5,8 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#E6E6FA"
-    android:fillViewport="true"
-    >
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -14,7 +13,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Title similar to home page -->
+        <!-- Title -->
         <TextView
             android:id="@+id/appTitleMap"
             android:layout_width="wrap_content"
@@ -25,7 +24,7 @@
             android:textStyle="bold"
             android:paddingBottom="16dp"/>
 
-        <!-- Back button row (similar style to homepage could be just a simple row with a styled button) -->
+        <!-- Back Button Row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,18 +34,17 @@
 
             <ImageView
                 android:id="@+id/backButton"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:src="@drawable/arrow_back"
                 android:contentDescription="@string/back_button_label"
+                android:background="@drawable/circle_light_blue"
+                android:padding="8dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="40dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                android:layout_marginTop="16dp"/>
         </LinearLayout>
 
-        <!-- CardView containing the map -->
+        <!-- Map Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="500dp"
@@ -61,7 +59,7 @@
                 android:layout_height="match_parent" />
         </androidx.cardview.widget.CardView>
 
-        <!-- Search Section in a card -->
+        <!-- Search + Save card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -83,20 +81,40 @@
                     android:padding="8dp"
                     android:textColor="#000000"
                     android:textColorHint="#555555"
-                    android:layout_marginBottom="8dp"
-                    />
+                    android:layout_marginBottom="8dp"/>
 
-                <Button
-                    android:id="@+id/searchPharmacyButton"
+                <!-- 图标行：search & save -->
+                <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Search"
-                    android:textColor="#FFFFFF" />
-            </LinearLayout>
+                    android:orientation="horizontal">
 
+                    <!-- Search icon -->
+                    <ImageView
+                        android:id="@+id/searchPharmacyButton"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/search_icon"
+                        android:contentDescription="@string/search"
+                        android:background="@drawable/circle_light_blue"
+                        android:padding="8dp"
+                        android:layout_marginStart="70dp"/>
+
+                    <!-- Save location icon -->
+                    <ImageView
+                        android:id="@+id/saveLocationButton"
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:src="@drawable/save_location_icon"
+                        android:contentDescription="@string/save_button"
+                        android:background="@drawable/circle_light_blue"
+                        android:padding="8dp"
+                        android:layout_marginStart="100dp"/>
+                </LinearLayout>
+            </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Nearby Pharmacies and Save Location Section -->
+        <!-- Nearby Pharmacies + Saved Locations Card -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -116,43 +134,19 @@
                     android:id="@+id/nearbyPharmaciesButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Nearby Pharmacies"
-                    android:textColor="#FFFFFF"
+                    android:text="@string/nearby_pharmacies"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textColor="@android:color/white"
                     android:layout_marginEnd="16dp"/>
 
                 <Button
-                    android:id="@+id/saveLocationButton"
+                    android:id="@+id/showSavedLocationsButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Save Location"
-                    android:textColor="#FFFFFF" />
+                    android:text="@string/saved_locations"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:textColor="@android:color/white" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
-
-        <!-- Show Saved Locations Section -->
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="8dp"
-            android:padding="16dp"
-            android:layout_marginBottom="16dp">
-
-        </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/showSavedLocationsButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Show Saved Locations"
-                android:textColor="#FFFFFF" />
-        </LinearLayout>
-
     </LinearLayout>
 </ScrollView>
