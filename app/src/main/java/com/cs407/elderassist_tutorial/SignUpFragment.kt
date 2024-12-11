@@ -1,6 +1,7 @@
 package com.cs407.elderassist_tutorial
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import android.widget.Button
@@ -25,6 +26,7 @@ class SignUpFragment : Fragment() {
     private lateinit var passwordEditText: EditText
     private lateinit var signUpButton: Button
     private lateinit var errorTextView: TextView
+    private lateinit var backToHomeButton: Button
 
     //private lateinit var userPasswdKV: SharedPreferences
     private lateinit var noteDB: NoteDatabase
@@ -57,6 +59,19 @@ class SignUpFragment : Fragment() {
 
         passwordEditText.doAfterTextChanged {
             errorTextView.visibility = View.GONE
+        }
+
+        backToHomeButton = view.findViewById(R.id.backToHomeButton)
+        // 设置点击事件
+        backToHomeButton.setOnClickListener {
+            val intent = Intent(requireContext(), HomeActivity::class.java)
+            startActivity(intent)
+
+            // 如果希望关闭当前 LoginActivity 页面，防止返回堆栈中残留：
+            requireActivity().finish()
+            // 调用 CustomDialogFragment
+//            val dialogFragment = CustomDialogFragment()
+//            dialogFragment.show(parentFragmentManager, "CustomDialog")
         }
 
         signUpButton.setOnClickListener {

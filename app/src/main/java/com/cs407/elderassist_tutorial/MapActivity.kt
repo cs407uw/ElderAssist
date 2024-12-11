@@ -68,6 +68,26 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 CSVimport.linkPharmacyAndMedications(csvReader3, this@MapActivity)
 
                 Log.d("CSVImport", "Pharmacy data imported successfully")
+
+                //userinfo
+                val searchType = intent.getStringExtra("SEARCH_TYPE")
+                val searchName = intent.getStringExtra("SEARCH_NAME")
+                val searchInput = findViewById<EditText>(R.id.searchInput)
+
+                if (!searchName.isNullOrEmpty()) {
+                    try {
+                        // 原有逻辑...
+                        Log.d("Map",searchName)
+                        searchInput.setText(searchName)
+                        when (searchType) {
+                            "medicine" -> searchPharmaciesWithMedicine(searchInput.text.toString().trim())
+                            "pharmacy" -> searchPharmacyByName(searchInput.text.toString().trim())
+                        }
+                    } catch (e: Exception) {
+                        Log.e("Maperror", "Error in searchPharmacyByName: ${e.message}")
+                        Toast.makeText(this@MapActivity, "An error occurred. Please try again.", Toast.LENGTH_SHORT).show()
+                    }
+                }
             } catch (e: Exception) {
                 Log.e("CSVImport", "Error importing pharmacy data: ${e.message}")
             }
@@ -454,4 +474,61 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
             }
         }
     }
+
+
+    //userinfo
+    private fun searchPharmacyByName(pharmacyName: String) {
+        val database = NoteDatabase.getDatabase(this)
+        val pharmacyDao = database.pharmacyDao()
+
+        lifecycleScope.launch {
+            // 获取单个或多个 Pharmacy
+            val pharmacies = withContext(Dispatchers.IO) {
+                listOfNotNull(pharmacyDao.getPharmacyByName(pharmacyName))
+            }
+
+            if (pharmacies.isEmpty()) {
+                Toast.makeText(this@MapActivity, "No pharmacies found for this name", Toast.LENGTH_SHORT).show()
+                return@launch
+            }
+
+            // 清空地图标记
+            mMap.clear()
+
+            // 遍历每个药店，添加标记
+            pharmacies.forEach { pharmacy ->
+                val pharmacyLatLng = getLatLngFromAddress(pharmacy.address ?: "")
+                if (pharmacyLatLng.latitude != 0.0 && pharmacyLatLng.longitude != 0.0) {
+                    mMap.addMarker(
+                        MarkerOptions()
+                            .position(pharmacyLatLng)
+                            .title(pharmacy.pharmacyName)
+                            .snippet("Address: ${pharmacy.address}\nPhone: ${pharmacy.phone}")
+                    )
+                } else {
+                    Log.e("MapActivity", "Invalid coordinates for pharmacy: ${pharmacy.pharmacyName}")
+                }
+            }
+
+            // 找到最近的药店
+            val userLatLng = userLocation ?: LatLng(0.0, 0.0)
+            val closestPharmacy = pharmacies.minByOrNull { pharmacy ->
+                val pharmacyLatLng = getLatLngFromAddress(pharmacy.address ?: "")
+                val results = FloatArray(1)
+                android.location.Location.distanceBetween(
+                    userLatLng.latitude, userLatLng.longitude,
+                    pharmacyLatLng.latitude, pharmacyLatLng.longitude,
+                    results
+                )
+                results[0] // 返回距离值
+            }
+
+            // 将相机移动到最近药店
+            closestPharmacy?.let { pharmacy ->
+                val closestLatLng = getLatLngFromAddress(pharmacy.address ?: "")
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(closestLatLng, 15f))
+            }
+        }
+    }
 }
+

@@ -2,7 +2,20 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/loginmain">
+
+    <fragment
+        android:id="@+id/loginmain"
+        android:name="com.cs407.elderassist_tutorial.LoginHome"
+        android:label="Home"
+        tools:layout="@layout/fragment_loginhome">
+        <action
+            android:id="@+id/action_homeFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
 
     <!-- Login Fragment -->
     <fragment
@@ -28,12 +41,12 @@
         tools:layout="@layout/fragment_note_list">
         <action
             android:id="@+id/action_noteListFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
+            app:destination="@id/loginmain"
             app:popUpTo="@id/noteListFragment"
             app:popUpToInclusive="true"/>
         <action
             android:id="@+id/action_noteListFragment_to_editUserInfoFragment"
-            app:destination="@id/editUserInfoFragment"/>
+            app:destination="@id/editUserInfoFragment" />
     </fragment>
 
     <!-- Sign Up Fragment -->
@@ -46,7 +59,7 @@
             android:id="@+id/action_signUpFragment_to_editUserInfoFragment"
             app:destination="@id/editUserInfoFragment"
             app:popUpTo="@id/signUpFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
 
     <!-- Edit User Info Fragment -->
@@ -59,7 +72,8 @@
             android:id="@+id/action_editUserInfoFragment_to_noteListFragment"
             app:destination="@id/noteListFragment"
             app:popUpTo="@id/editUserInfoFragment"
-            app:popUpToInclusive="true"/>
+            app:popUpToInclusive="true" />
     </fragment>
 
 </navigation>
+
