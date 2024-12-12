@@ -9,7 +9,7 @@ import java.io.IOException
 
 object ChatAgent {
 
-    private const val WIT_AI_ACCESS_TOKEN = "YGRKMKSEL5OJ7RFEM2TAMUCOLOMBCRGQ"
+    private const val WIT_AI_ACCESS_TOKEN = "OJOIRNWKXWOEFUC65U6OIAKVGOTHW66G"
     private const val WIT_AI_URL = "https://api.wit.ai/message?v=20241127&q="
 
     private val client = OkHttpClient()
